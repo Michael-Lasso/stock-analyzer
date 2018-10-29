@@ -8,6 +8,7 @@ import javax.annotation.PostConstruct;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +30,7 @@ public class NLPServiceImpl implements NLPService {
 	private AWSCredentialsProvider awsCreds;
 	private AmazonComprehend comprehendClient;
 
+	
 	@Value("${access.key}")
 	private String access_key;
 
