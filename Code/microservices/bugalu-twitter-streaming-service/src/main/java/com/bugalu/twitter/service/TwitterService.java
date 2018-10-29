@@ -1,8 +1,8 @@
-package com.bugalu.service;
+package com.bugalu.twitter.service;
 
 import java.util.List;
 
-import com.bugalu.domain.Twit;
+import com.bugalu.twitter.domain.Twit;
 
 public interface TwitterService {
 

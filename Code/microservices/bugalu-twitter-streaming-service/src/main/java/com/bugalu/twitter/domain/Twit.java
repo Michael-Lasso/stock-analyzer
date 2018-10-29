@@ -1,4 +1,4 @@
-package com.bugalu.domain;
+package com.bugalu.twitter.domain;
 
 public class Twit {
 	private String topic;

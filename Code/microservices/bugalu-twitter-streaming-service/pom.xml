@@ -4,13 +4,13 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.in28minutes.microservices</groupId>
-	<artifactId>currency-conversion-service</artifactId>
+	<groupId>com.bugalu.twitter</groupId>
+	<artifactId>bugalu-twitter-streaming-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>currency-conversion-service</name>
-	<description>Demo project for Spring Boot</description>
+	<name>bugalu-twitter-streaming-service</name>
+	<description>Twitter streaming service</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -61,21 +61,6 @@
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
 		</dependency>
-		<!-- <dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-sleuth</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-sleuth-zipkin</artifactId>
-		</dependency> -->
-<!-- 
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-bus-amqp</artifactId>
-		</dependency> -->
-
-		<!--twitter dependency -->
 		<dependency>
 			<groupId>com.twitter</groupId>
 			<artifactId>hbc-core</artifactId> <!-- or hbc-twitter4j -->
