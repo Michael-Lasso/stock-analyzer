@@ -8,9 +8,9 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @SpringBootApplication
 @EnableFeignClients("com.bugalu.twitter.adapter")
 @EnableDiscoveryClient
-public class TwitterFeedApplication {
+public class TwitterStreamingApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(TwitterFeedApplication.class, args);
+		SpringApplication.run(TwitterStreamingApplication.class, args);
 	}
 }

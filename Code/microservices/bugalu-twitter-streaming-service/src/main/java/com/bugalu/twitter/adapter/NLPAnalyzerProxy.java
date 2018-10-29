@@ -8,10 +8,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import com.bugalu.twitter.domain.Twit;
 
-@RibbonClient(name = "currency-exchange-service")
+@RibbonClient(name = "bugalu-nlp-analyzer-service")
 @FeignClient(name = "netflix-api-zuul-gateway-server")
 public interface NLPAnalyzerProxy {
 
-	@PostMapping("currency-exchange-service/sentiment")
+	@PostMapping("bugalu-nlp-analyzer-service/sentiments")
 	public ResponseEntity<Twit> computSentimentValue(@RequestBody Twit twit);
 }

@@ -1,4 +1,4 @@
-package com.in28minutes.microservices.currencyexchangeservice;
+package com.bugalu.nlp.service;
 
 import java.util.List;
 

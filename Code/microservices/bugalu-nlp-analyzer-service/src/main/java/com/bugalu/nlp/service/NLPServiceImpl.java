@@ -1,4 +1,4 @@
-package com.in28minutes.microservices.currencyexchangeservice;
+package com.bugalu.nlp.service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +21,7 @@ import com.amazonaws.services.comprehend.model.DetectKeyPhrasesRequest;
 import com.amazonaws.services.comprehend.model.DetectKeyPhrasesResult;
 import com.amazonaws.services.comprehend.model.DetectSentimentRequest;
 import com.amazonaws.services.comprehend.model.DetectSentimentResult;
+import com.bugalu.nlp.domain.Sentiment;
 
 @Service
 public class NLPServiceImpl implements NLPService {

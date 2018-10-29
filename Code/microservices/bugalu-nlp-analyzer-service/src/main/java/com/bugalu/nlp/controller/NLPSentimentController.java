@@ -1,4 +1,4 @@
-package com.in28minutes.microservices.currencyexchangeservice;
+package com.bugalu.nlp.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,8 +8,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController("/sentiment")
-public class CurrencyExchangeController {
+import com.bugalu.nlp.domain.Twit;
+import com.bugalu.nlp.service.NLPService;
+
+@RestController("/sentiments")
+public class NLPSentimentController {
 
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
