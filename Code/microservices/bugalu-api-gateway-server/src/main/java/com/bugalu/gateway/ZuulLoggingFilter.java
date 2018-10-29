@@ -1,4 +1,4 @@
-package com.in28minutes.microservices.netflixapizuulgatewayserver;
+package com.bugalu.gateway;
 
 import javax.servlet.http.HttpServletRequest;
 

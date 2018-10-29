@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import com.bugalu.twitter.domain.Twit;
 
 @RibbonClient(name = "bugalu-nlp-analyzer-service")
-@FeignClient(name = "netflix-api-zuul-gateway-server")
+@FeignClient(name = "bugalu-api-gateway-server")
 public interface NLPAnalyzerProxy {
 
 	@PostMapping("bugalu-nlp-analyzer-service/sentiments")
