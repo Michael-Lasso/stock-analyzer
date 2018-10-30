@@ -1,4 +1,4 @@
-package com.in28minutes.microservices.springcloudconfigserver;
+package com.bugalu.config;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -8,9 +8,9 @@ import org.springframework.cloud.config.server.EnableConfigServer;
 @EnableConfigServer
 @EnableDiscoveryClient
 @SpringBootApplication
-public class SpringCloudConfigServerApplication {
+public class BugaluCloudConfigServerApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(SpringCloudConfigServerApplication.class, args);
+		SpringApplication.run(BugaluCloudConfigServerApplication.class, args);
 	}
 }
