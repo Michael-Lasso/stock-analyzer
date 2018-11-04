@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import com.bugalu.stock.domain.StockDto;
-import com.bugalu.stock.stock.StockBatchService;
+import com.bugalu.stock.service.StockBatchService;
 
 @Controller
 public class StockController {

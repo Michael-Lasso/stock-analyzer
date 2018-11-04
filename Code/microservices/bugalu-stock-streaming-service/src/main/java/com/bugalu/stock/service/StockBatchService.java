@@ -1,4 +1,4 @@
-package com.bugalu.stock.stock;
+package com.bugalu.stock.service;
 
 import java.util.ArrayList;
 import java.util.List;

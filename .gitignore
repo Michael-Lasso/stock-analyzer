@@ -32,3 +32,5 @@ dependency-reduced-pom.xml
 /.metadata/
 /.recommenders/
 bugalu-app/bugalu-rest-client/upload-dir/*
+resources/GoogleNews-vectors-negative300.txt
+Code/microservices/git-localconfig-repo
