@@ -9,17 +9,19 @@ import org.springframework.stereotype.Component;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 
-@Component
-public class ZuulLoggingFilter extends ZuulFilter{
+//@Component
+public class ZuulLoggingFilter 
+//extends ZuulFilter
+{
 
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	@Override
+//	@Override
 	public boolean shouldFilter() {
 		return true;
 	}
 
-	@Override
+//	@Override
 	public Object run() {
 		HttpServletRequest request = 
 				RequestContext.getCurrentContext().getRequest();
@@ -28,12 +30,12 @@ public class ZuulLoggingFilter extends ZuulFilter{
 		return null;
 	}
 
-	@Override
+//	@Override
 	public String filterType() {
 		return "pre";
 	}
 
-	@Override
+//	@Override
 	public int filterOrder() {
 		return 1;
 	}
