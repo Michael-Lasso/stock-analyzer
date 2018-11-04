@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.bugalu</groupId>
+	<artifactId>bugalu-analyzer</artifactId>
+    <version>{bugalu.version}</version>
+	<modules>
+		<module>bugalu-cloud-config-server</module>
+        <module>bugalu-discovery-naming-server</module>
+		<module>bugalu-api-gateway-server</module>
+		<module>bugalu-stock-streaming-service</module>
+        <module>bugalu-nlp-analyzer-service</module>
+        <module>bugalu-twitter-streaming-service</module>
+	</modules>
+	<packaging>pom</packaging>
+
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.0.4.RELEASE</version>
+	</parent>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<java.version>1.8</java.version>
+        <bugalu.version>0.0.1-SNAPSHOT</bugalu.version>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+		</dependency>
+	</dependencies>
+</project>

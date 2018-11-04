@@ -31,6 +31,7 @@ import com.twitter.hbc.httpclient.auth.OAuth1;
 public class TwitterServiceImpl implements TwitterService {
 
 	private ConcurrentHashMap<String, Twit> map;
+	private Thread thread;
 	private static JsonParser jsonParser = new JsonParser();
 
 	private static Twit extractIdFromTweet(String tweetJson) {
@@ -49,7 +50,6 @@ public class TwitterServiceImpl implements TwitterService {
 		return new ArrayList<>(map.values());
 	}
 
-	private Thread thread;
 
 	@PostConstruct
 	public void init() {
