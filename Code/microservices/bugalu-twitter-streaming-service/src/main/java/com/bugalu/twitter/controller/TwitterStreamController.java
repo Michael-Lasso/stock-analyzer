@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bugalu.twitter.adapter.NLPAnalyzerProxy;
@@ -25,7 +27,6 @@ public class TwitterStreamController {
 	@Autowired
 	private TwitterService service;
 
-
 	@GetMapping("/twits")
 	public ResponseEntity<List<Twit>> getTwitList() {
 		logger.info("getting list of twits");
@@ -37,6 +38,12 @@ public class TwitterStreamController {
 		Twit twit = service.getTwit(twit_id);
 		ResponseEntity<Twit> response = proxy.computSentimentValue(twit);
 		return response;
+	}
+
+	@PostMapping("/twits/reset")
+	public ResponseEntity<Boolean> clearTwitsById(@RequestBody List<String> idList) {
+		boolean deleted = service.clearTwitsById(idList);
+		return ResponseEntity.ok(deleted);
 	}
 
 }

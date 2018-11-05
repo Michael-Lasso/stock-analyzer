@@ -50,6 +50,12 @@ public class TwitterServiceImpl implements TwitterService {
 		return new ArrayList<>(map.values());
 	}
 
+	public boolean clearTwitsById(List<String> ListId) {
+		for (String key : ListId) {
+			map.remove(key);
+		}
+		return true;
+	}
 
 	@PostConstruct
 	public void init() {
@@ -113,7 +119,7 @@ public class TwitterServiceImpl implements TwitterService {
 				client.stop();
 			}
 			if (msg != null) {
-//				logger.info("Twit {}", msg);
+				// logger.info("Twit {}", msg);
 				Twit twit = extractIdFromTweet(msg);
 				map.put(twit.getTopic(), twit);
 			}

@@ -9,4 +9,6 @@ public interface TwitterService {
 	List<Twit> poll();
 
 	Twit getTwit(String twit_id);
+
+	boolean clearTwitsById(List<String> ListId);
 }
