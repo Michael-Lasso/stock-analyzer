@@ -19,7 +19,7 @@ import com.bugalu.twitter.service.TwitterService;
 @RestController
 public class TwitterStreamController {
 
-	private Logger logger = LoggerFactory.getLogger(this.getClass());
+	private Logger log = LoggerFactory.getLogger(this.getClass());
 
 	@Autowired
 	private NLPAnalyzerProxy proxy;
@@ -29,7 +29,7 @@ public class TwitterStreamController {
 
 	@GetMapping("/twits")
 	public ResponseEntity<List<Twit>> getTwitList() {
-		logger.info("getting list of twits");
+		log.info("getting list of twits");
 		return ResponseEntity.ok(service.poll());
 	}
 
@@ -42,6 +42,7 @@ public class TwitterStreamController {
 
 	@PostMapping("/twits/reset")
 	public ResponseEntity<Boolean> clearTwitsById(@RequestBody List<String> idList) {
+		log.info("reseting list");
 		boolean deleted = service.clearTwitsById(idList);
 		return ResponseEntity.ok(deleted);
 	}

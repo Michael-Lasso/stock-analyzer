@@ -54,7 +54,7 @@ public class TwitterServiceImpl implements TwitterService {
 		for (String key : ListId) {
 			map.remove(key);
 		}
-		return true;
+		return Boolean.TRUE;
 	}
 
 	@PostConstruct

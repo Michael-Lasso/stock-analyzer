@@ -1,76 +1,50 @@
 package com.bugalu.orchestrator.service;
 
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Random;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-import com.bugalu.orchestrator.adapter.NLPAnalyzerProxy;
-import com.bugalu.orchestrator.adapter.StockProxy;
-import com.bugalu.orchestrator.adapter.TwitterProxy;
-import com.bugalu.orchestrator.domain.StockDto;
 import com.bugalu.orchestrator.domain.Twit;
-import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
-import com.netflix.hystrix.contrib.javanica.command.AsyncResult;
 
 @Component
 public class OrchestratorService {
-	private static final String hystrixStr = "asyncCall";
+	private Logger log = LoggerFactory.getLogger(this.getClass());
 
 	@Autowired
-	private NLPAnalyzerProxy nlpProxy;
-	@Autowired
-	private TwitterProxy twitterProxy;
-	@Autowired
-	private StockProxy stockProxy;
+	private final RestParallelClientService service;
 
-	// public OrchestratorService(NLPAnalyzerProxy nlpProxy, StockProxy stockProxy,
-	// TwitterProxy twitterProxy) {
-	// this.nlpProxy = nlpProxy;
-	// this.stockProxy = stockProxy;
-	// this.twitterProxy = twitterProxy;
-	// }
-
-	@HystrixCommand(groupKey = hystrixStr, commandKey = hystrixStr, fallbackMethod = "")
-	public Future<List<StockDto>> compute(String stockName) {
-		return new AsyncResult<List<StockDto>>() {
-			@Override
-			public List<StockDto> invoke() {
-				ResponseEntity<List<StockDto>> response = stockProxy.fetchStocks(stockName);
-				return response.getBody();
-			}
-		};
+	public OrchestratorService(RestParallelClientService service) {
+		this.service = service;
 	}
 
-	@HystrixCommand(groupKey = hystrixStr, commandKey = hystrixStr, fallbackMethod = "")
-	public Future<List<Twit>> getAllTwits() {
-		return new AsyncResult<List<Twit>>() {
-			@Override
-			public List<Twit> invoke() {
-				ResponseEntity<List<Twit>> response = twitterProxy.getAllTwits();
-				return response.getBody();
-			}
-		};
-	}
+	// @Scheduled(cron = "${orchestrator.schedule}")
+	public void reportCurrentTime() {
+		log.info("running: {}", new Date());
+		Future<List<Twit>> twits = service.getAllTwits();
+		try {
+			List<Twit> list = twits.get();
+			log.info("fetches list");
+			List<String> idList = list.stream().map(a -> a.getTopic()).collect(Collectors.toList());
+			Future<Boolean> isClear = service.clearTwits(idList);
+			log.info("reseted: {}", isClear.get());
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
-	public Future<List<Twit>> fallBackTwits() {
-		return new AsyncResult<List<Twit>>() {
-			@Override
-			public List<Twit> invoke() {
-				return new ArrayList<>();
-			}
-		};
-	}
-
-	public Future<List<StockDto>> fallBackCompute(String stockName) {
-		return new AsyncResult<List<StockDto>>() {
-			@Override
-			public List<StockDto> invoke() {
-				return new ArrayList<>();
-			}
-		};
+		Random rand = new Random();
 	}
 }
