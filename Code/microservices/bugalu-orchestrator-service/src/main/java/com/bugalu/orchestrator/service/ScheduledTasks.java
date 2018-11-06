@@ -1,20 +1,20 @@
 package com.bugalu.orchestrator.service;
 
-import java.io.File;
+import java.util.Date;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-@Component
+//@Component
 public class ScheduledTasks {
 
-	private Logger logger = LoggerFactory.getLogger(this.getClass());
+	private Logger log = LoggerFactory.getLogger(this.getClass());
 
-//	@Scheduled(fixedRate = 20000)
+	@Scheduled(fixedRate = 20000)
 	public void reportCurrentTime() {
-
+		log.info("running: {}", new Date());
 	}
 
 }

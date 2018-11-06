@@ -1,5 +1,6 @@
 package com.bugalu.orchestrator.service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
@@ -15,7 +16,7 @@ import org.springframework.stereotype.Service;
 
 import com.bugalu.orchestrator.domain.Twit;
 
-@Service
+@Component
 public class RandomTraffic {
 	private Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -28,6 +29,7 @@ public class RandomTraffic {
 
 	@Scheduled(cron = "${orchestrator.schedule}")
 	public void reportCurrentTime() {
+		log.info("running: {}", new Date());
 		// Future<List<Twit>> twits = service.getAllTwits();
 		// try {
 		// List<Twit> list = twits.get();
