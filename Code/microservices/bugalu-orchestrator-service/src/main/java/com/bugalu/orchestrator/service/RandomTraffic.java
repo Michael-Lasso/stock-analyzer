@@ -30,21 +30,20 @@ public class RandomTraffic {
 	@Scheduled(cron = "${orchestrator.schedule}")
 	public void reportCurrentTime() {
 		log.info("running: {}", new Date());
-		// Future<List<Twit>> twits = service.getAllTwits();
-		// try {
-		// List<Twit> list = twits.get();
-		// log.info("fetches list");
-		// List<String> idList = list.stream().map(a ->
-		// a.getTopic()).collect(Collectors.toList());
-		//// service.
-		// } catch (InterruptedException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// } catch (ExecutionException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
-		//
-		// Random rand = new Random();
+		Future<List<Twit>> twits = service.getAllTwits();
+		try {
+			List<Twit> list = twits.get();
+			log.info("fetches list");
+			List<String> idList = list.stream().map(a -> a.getTopic()).collect(Collectors.toList());
+			// service.
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		Random rand = new Random();
 	}
 }
