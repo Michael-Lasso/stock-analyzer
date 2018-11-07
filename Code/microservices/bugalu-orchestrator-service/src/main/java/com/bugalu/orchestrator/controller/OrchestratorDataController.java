@@ -28,7 +28,7 @@ public class OrchestratorDataController {
 		return proxy.getAllTwits();
 	}
 
-	@Scheduled(cron = "${orchestrator.schedule}")
+//	@Scheduled(cron = "${orchestrator.schedule}")
 	public void compute() {
 		log.info("hitting twits");
 		log.info("hitting: {}", proxy.getAllTwits());

@@ -20,19 +20,16 @@ import com.netflix.hystrix.contrib.javanica.command.AsyncResult;
 public class RestParallelClientService {
 	private static final String hystrixStr = "asyncCall";
 
-	@Autowired
 	private NLPAnalyzerProxy nlpProxy;
-	@Autowired
 	private TwitterProxy twitterProxy;
-	@Autowired
 	private StockProxy stockProxy;
 
-	// public RestParallelClientService(NLPAnalyzerProxy nlpProxy, StockProxy stockProxy,
-	// TwitterProxy twitterProxy) {
-	// this.nlpProxy = nlpProxy;
-	// this.stockProxy = stockProxy;
-	// this.twitterProxy = twitterProxy;
-	// }
+	@Autowired
+	public RestParallelClientService(NLPAnalyzerProxy nlpProxy, StockProxy stockProxy, TwitterProxy twitterProxy) {
+		this.nlpProxy = nlpProxy;
+		this.stockProxy = stockProxy;
+		this.twitterProxy = twitterProxy;
+	}
 
 	@HystrixCommand(groupKey = hystrixStr, commandKey = hystrixStr, fallbackMethod = "fallBackCompute")
 	public Future<List<StockDto>> compute(String stockName) {
@@ -56,6 +53,17 @@ public class RestParallelClientService {
 		};
 	}
 
+	@HystrixCommand(groupKey = hystrixStr, commandKey = hystrixStr, fallbackMethod = "fallBackSentiment")
+	public Future<Twit> getTwitSentiment(Twit twit) {
+		return new AsyncResult<Twit>() {
+			@Override
+			public Twit invoke() {
+				ResponseEntity<Twit> response = nlpProxy.computSentimentValue(twit);
+				return response.getBody();
+			}
+		};
+	}
+
 	@HystrixCommand(groupKey = hystrixStr, commandKey = hystrixStr, fallbackMethod = "fallBackResetTwitis")
 	public Future<Boolean> clearTwits(List<String> idList) {
 		return new AsyncResult<Boolean>() {
@@ -68,17 +76,32 @@ public class RestParallelClientService {
 	}
 
 	@HystrixCommand
-	public List<Twit> fallBackTwits() {
+	private Future<Twit> fallBackSentiment(Twit twit) {
+		return new AsyncResult<Twit>() {
+			@Override
+			public Twit invoke() {
+				return twit;
+			}
+		};
+	}
+
+	@HystrixCommand
+	private Future<List<Twit>> fallBackTwits() {
+		return new AsyncResult<List<Twit>>() {
+			@Override
+			public List<Twit> invoke() {
+				return new ArrayList<>();
+			}
+		};
+	}
+
+	@HystrixCommand
+	private List<StockDto> fallBackCompute(String stockName) {
 		return new ArrayList<>();
 	}
 
 	@HystrixCommand
-	public List<StockDto> fallBackCompute(String stockName) {
-		return new ArrayList<>();
-	}
-
-	@HystrixCommand
-	public Boolean fallBackResetTwitis(List<String> idList) {
+	private Boolean fallBackResetTwitis(List<String> idList) {
 		return Boolean.FALSE;
 	}
 }

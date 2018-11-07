@@ -4,12 +4,12 @@ public class Twit {
 	private String topic;
 	private String text;
 	private int countWeight;
-	private String value;
+	private Sentiment value;
 
 	public Twit() {
 	}
 
-	public Twit(String topic, String text, int countWeight, String value) {
+	public Twit(String topic, String text, int countWeight, Sentiment value) {
 		super();
 		this.topic = topic;
 		this.text = text;
@@ -41,11 +41,11 @@ public class Twit {
 		this.countWeight = countWeight;
 	}
 
-	public String getValue() {
+	public Sentiment getValue() {
 		return value;
 	}
 
-	public void setValue(String value) {
+	public void setValue(Sentiment value) {
 		this.value = value;
 	}
 
