@@ -21,12 +21,12 @@ import com.bugalu.orchestrator.domain.Twit;
 public class OrchestratorService {
 	private Logger log = LoggerFactory.getLogger(this.getClass());
 
-	private final RestParallelClientService service;
+	private final ConcurrentRestClient service;
 
 	private TwitterProxy proxy;
 
 	@Autowired
-	public OrchestratorService(RestParallelClientService service, TwitterProxy proxy) {
+	public OrchestratorService(ConcurrentRestClient service, TwitterProxy proxy) {
 		this.service = service;
 		this.proxy = proxy;
 	}

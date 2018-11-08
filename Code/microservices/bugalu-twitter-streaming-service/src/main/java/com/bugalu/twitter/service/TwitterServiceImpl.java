@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
@@ -11,8 +12,12 @@ import javax.annotation.PostConstruct;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.bugalu.twitter.domain.FutureTwit;
+import com.bugalu.twitter.domain.Language;
 import com.bugalu.twitter.domain.Twit;
 import com.google.common.collect.Lists;
 import com.google.gson.JsonObject;
@@ -30,9 +35,35 @@ import com.twitter.hbc.httpclient.auth.OAuth1;
 @Service
 public class TwitterServiceImpl implements TwitterService {
 
-	private ConcurrentHashMap<String, Twit> map;
+	Logger log = LoggerFactory.getLogger(TwitterServiceImpl.class.getName());
+
+	// use your own credentials - don't share them with anyone
+	@Value("twitter.consumer.key")
+	String consumerKey;
+	@Value("twitter.consumer.secret")
+	String consumerSecret;
+	@Value("twitter.token")
+	String token;
+	@Value("twitter.secret")
+	String secret;
+	@Value("${message.queue.size:10}")
+	int msgQueSize;
+	@Value("language.filter")
+	String lan;
+
+	List<String> terms = Lists.newArrayList("tesla", "model 3", "elon_musk");
+
 	private Thread thread;
+	private ConcurrentHashMap<String, Twit> map;
 	private static JsonParser jsonParser = new JsonParser();
+	private ConcurrentLinkedQueue<FutureTwit> twitterFutureQueue;
+	private final ConcurrentRestClient concurrentRestClient;
+	private TwitterFilterService twitterFilterService;
+
+	@Autowired
+	public TwitterServiceImpl(ConcurrentRestClient concurrentRestClient) {
+		this.concurrentRestClient = concurrentRestClient;
+	}
 
 	private static Twit extractIdFromTweet(String tweetJson) {
 		String text = jsonParser.parse(tweetJson).getAsJsonObject().get("text").getAsString();
@@ -59,57 +90,36 @@ public class TwitterServiceImpl implements TwitterService {
 
 	@PostConstruct
 	public void init() {
-		map = new ConcurrentHashMap<String, Twit>();
+		map = new ConcurrentHashMap<>();
+		twitterFutureQueue = new ConcurrentLinkedQueue<>();
 		Runnable runnable = () -> {
 			run();
 		};
+		twitterFilterService = new TwitterFilterService(map, twitterFutureQueue);
 		thread = new Thread(runnable);
 		thread.start();
-	}
-
-	Logger logger = LoggerFactory.getLogger(TwitterServiceImpl.class.getName());
-
-	// use your own credentials - don't share them with anyone
-	String consumerKey = "wn3JdP6PMFomWT3mEdSkAtkWc";
-	String consumerSecret = "A1e4hiYYwgqvQ9IwIxVUurzhLG0d9pQvhEgNOnuL2ELgsZZ6a2";
-	String token = "1048599854887460864-csGwXHFNPQz0NTvruHjrHhhd7u0DfQ";
-	String secret = "h8xwLXFGmfOOOEjViktEyBftLeRSmyvLHOFtTsv2RxCCx";
-
-	List<String> terms = Lists.newArrayList("tesla", "", "model 3", "elon_musk");
-
-	public TwitterServiceImpl() {
+		twitterFilterService.start();
 	}
 
 	public void run() {
 
-		logger.info("Setup");
+		log.info("Setup");
 
 		/**
 		 * Set up your blocking queues: Be sure to size these properly based on expected
 		 * TPS of your stream
 		 */
-		BlockingQueue<String> msgQueue = new LinkedBlockingQueue<String>(1000);
+		BlockingQueue<String> msgQueue = new LinkedBlockingQueue<String>(msgQueSize);
 
-		// create a twitter client
 		Client client = createTwitterClient(msgQueue);
-		// Attempts to establish a connection.
 		client.connect();
-
-		// create a kafka producer
-		// KafkaProducer<String, String> producer = createKafkaProducer();
 
 		// add a shutdown hook
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-			logger.info("stopping application...");
-			logger.info("shutting down client from twitter...");
+			log.info("shutting down client from twitter...");
 			client.stop();
-			logger.info("closing producer...");
-			// producer.close();
-			logger.info("done!");
 		}));
 
-		// loop to send tweets to kafka
-		// on a different thread, or multiple different threads....
 		while (!client.isDone()) {
 			String msg = null;
 			try {
@@ -119,30 +129,24 @@ public class TwitterServiceImpl implements TwitterService {
 				client.stop();
 			}
 			if (msg != null) {
-				// logger.info("Twit {}", msg);
 				Twit twit = extractIdFromTweet(msg);
-				map.put(twit.getTopic(), twit);
+				Language language = new Language(twit.getText(), lan);
+				twitterFutureQueue.add(new FutureTwit(twit, concurrentRestClient.getTwitSentiment(language)));
 			}
 		}
-		logger.info("End of application");
 	}
 
 	public Client createTwitterClient(BlockingQueue<String> msgQueue) {
 
-		/**
-		 * Declare the host you want to connect to, the endpoint, and authentication
-		 * (basic auth or oauth)
-		 */
 		Hosts hosebirdHosts = new HttpHosts(Constants.STREAM_HOST);
 		StatusesFilterEndpoint hosebirdEndpoint = new StatusesFilterEndpoint();
 
 		hosebirdEndpoint.trackTerms(terms);
 
-		// These secrets should be read from a config file
-		Authentication hosebirdAuth = new OAuth1(consumerKey, consumerSecret, token, secret);
+		Authentication twitterCurator = new OAuth1(consumerKey, consumerSecret, token, secret);
 
-		ClientBuilder builder = new ClientBuilder().name("Hosebird-Client-01") // optional: mainly for the logs
-				.hosts(hosebirdHosts).authentication(hosebirdAuth).endpoint(hosebirdEndpoint)
+		ClientBuilder builder = new ClientBuilder().name("twitter-curator-Client-01").hosts(hosebirdHosts)
+				.authentication(twitterCurator).endpoint(hosebirdEndpoint)
 				.processor(new StringDelimitedProcessor(msgQueue));
 
 		Client hosebirdClient = builder.build();

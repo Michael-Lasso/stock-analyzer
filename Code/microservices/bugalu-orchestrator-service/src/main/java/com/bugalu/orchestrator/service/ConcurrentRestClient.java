@@ -17,7 +17,7 @@ import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.netflix.hystrix.contrib.javanica.command.AsyncResult;
 
 @Component
-public class RestParallelClientService {
+public class ConcurrentRestClient {
 	private static final String hystrixStr = "asyncCall";
 
 	private NLPAnalyzerProxy nlpProxy;
@@ -25,7 +25,7 @@ public class RestParallelClientService {
 	private StockProxy stockProxy;
 
 	@Autowired
-	public RestParallelClientService(NLPAnalyzerProxy nlpProxy, StockProxy stockProxy, TwitterProxy twitterProxy) {
+	public ConcurrentRestClient(NLPAnalyzerProxy nlpProxy, StockProxy stockProxy, TwitterProxy twitterProxy) {
 		this.nlpProxy = nlpProxy;
 		this.stockProxy = stockProxy;
 		this.twitterProxy = twitterProxy;

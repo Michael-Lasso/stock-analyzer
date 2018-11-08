@@ -5,10 +5,12 @@ import java.util.Map;
 
 public interface NLPService {
 
-	public List<String> retrievePhrases(String text);
+	List<String> retrievePhrases(String text);
 
-	public String computeSentiment(String text);
+	String computeSentiment(String text);
 
-	public Map<String, Double> detectLanguate(String text);
+	Map<String, Double> detectLanguate(String text);
+
+	boolean filterLanguageByText(String text, String language);
 
 }

@@ -43,6 +43,9 @@ public class NLPServiceImpl implements NLPService {
 	@Value("${secret.key}")
 	private String secret_key;
 
+	@Value("${language.probability:0.80}")
+	private double languageProbabilityFilter;
+
 	@PostConstruct
 	public void init() {
 		try {
@@ -79,7 +82,7 @@ public class NLPServiceImpl implements NLPService {
 		Map<String, Double> map = detectLanguate(text);
 		double probability = map.get("en");
 		log.info("found languages: {}", map);
-		if (probability > .80) {
+		if (probability > languageProbabilityFilter) {
 
 			DetectSentimentRequest detectSentimentRequest = new DetectSentimentRequest().withText(text)
 					.withLanguageCode("en");
@@ -108,6 +111,15 @@ public class NLPServiceImpl implements NLPService {
 		}
 
 		return new HashMap<>();
+	}
+
+	@Override
+	public boolean filterLanguageByText(String text, String language) {
+		Map<String, Double> detectedLanguageMap = detectLanguate(text);
+		if (detectedLanguageMap.size() > 1 || detectedLanguageMap.get(language) == null) {
+			return Boolean.FALSE;
+		}
+		return Boolean.TRUE;
 	}
 
 }
