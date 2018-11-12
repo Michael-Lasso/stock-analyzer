@@ -24,13 +24,14 @@ public class TwitterStreamController {
 
 	@GetMapping("/twits")
 	public ResponseEntity<List<Twit>> getTwitList() {
-		log.info("getting list of twits");
-		return ResponseEntity.ok(service.poll());
+		List<Twit> response = service.poll();
+		log.info("getting list of twits: {}", response.size());
+		return ResponseEntity.ok(response);
 	}
 
 	@PostMapping("/twits/reset")
 	public ResponseEntity<Boolean> clearTwitsById(@RequestBody List<String> idList) {
-		log.info("reseting list");
+		log.info("reducing list by: {}", idList.size());
 		boolean deleted = service.clearTwitsById(idList);
 		return ResponseEntity.ok(deleted);
 	}

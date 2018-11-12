@@ -1,6 +1,12 @@
 package com.bugalu.orchestrator.domain;
 
-public class Twit {
+import java.util.HashMap;
+import java.util.Map;
+
+import com.bugalu.orchestrator.utils.AppConstants;
+
+public class Twit implements SocialMedia {
+
 	private String topic;
 	private String text;
 	private int countWeight;
@@ -52,6 +58,25 @@ public class Twit {
 	@Override
 	public String toString() {
 		return "Twit [topic=" + topic + ", text=" + text + ", countWeight=" + countWeight + ", value=" + value + "]";
+	}
+
+	@Override
+	public Map<String, Stats> computeData() {
+		Map<String, Stats> result = new HashMap<>();
+		Stats stats = new Stats();
+		stats.setCount(1);
+		if (value.equals(Sentiment.NEGATIVE)) {
+			stats.setNegatives(1);
+		} else {
+			stats.setPositives(1);
+		}
+		result.put(AppConstants.TWIT, stats);
+		return result;
+	}
+
+	@Override
+	public String getKey() {
+		return AppConstants.TWIT;
 	}
 
 }

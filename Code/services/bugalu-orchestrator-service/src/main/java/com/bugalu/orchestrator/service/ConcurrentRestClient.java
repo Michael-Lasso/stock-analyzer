@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import com.bugalu.orchestrator.adapter.NLPAnalyzerProxy;
 import com.bugalu.orchestrator.adapter.StockProxy;
 import com.bugalu.orchestrator.adapter.TwitterProxy;
+import com.bugalu.orchestrator.domain.SocialMedia;
 import com.bugalu.orchestrator.domain.StockDto;
 import com.bugalu.orchestrator.domain.Twit;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
@@ -54,8 +55,8 @@ public class ConcurrentRestClient {
 	}
 
 	@HystrixCommand(groupKey = hystrixStr, commandKey = hystrixStr, fallbackMethod = "fallBackSentiment")
-	public Future<Twit> getTwitSentiment(Twit twit) {
-		return new AsyncResult<Twit>() {
+	public Future<SocialMedia> getTwitSentiment(Twit twit) {
+		return new AsyncResult<SocialMedia>() {
 			@Override
 			public Twit invoke() {
 				ResponseEntity<Twit> response = nlpProxy.computSentimentValue(twit);
@@ -76,8 +77,8 @@ public class ConcurrentRestClient {
 	}
 
 	@HystrixCommand
-	private Future<Twit> fallBackSentiment(Twit twit) {
-		return new AsyncResult<Twit>() {
+	private Future<SocialMedia> fallBackSentiment(Twit twit) {
+		return new AsyncResult<SocialMedia>() {
 			@Override
 			public Twit invoke() {
 				return twit;

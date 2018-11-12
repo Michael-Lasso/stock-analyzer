@@ -33,7 +33,7 @@ public class ConcurrentRestClient {
 			public Boolean invoke() {
 				ResponseEntity<String> response = nlpProxy.detectLanguage(language);
 				log.info("response: {}", response);
-				return response.getBody().contains("OK,true");
+				return response.getBody().contains("true");
 			}
 		};
 	}

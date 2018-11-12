@@ -92,6 +92,7 @@ public class NLPServiceImpl implements NLPService {
 			if (sentiment == null || sentiment.equals("null") || sentiment.length() < 1) {
 				log.info("wrong sentiment: " + sentiment + " - " + text);
 			}
+			log.info("Found sentiment: {}", sentiment);
 			return sentiment;
 		}
 		return "NEUTRAL";

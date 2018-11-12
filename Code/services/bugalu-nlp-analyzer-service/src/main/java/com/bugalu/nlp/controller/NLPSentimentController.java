@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bugalu.nlp.domain.Language;
+import com.bugalu.nlp.domain.Sentiment;
 import com.bugalu.nlp.domain.Twit;
 import com.bugalu.nlp.service.NLPService;
 
@@ -23,8 +24,16 @@ public class NLPSentimentController {
 	@PostMapping("/sentiments")
 	public ResponseEntity<Twit> computeSentimentValue(@RequestBody Twit twit) {
 		logger.info("Received twit: {}", twit);
-		twit.setValue(nlp.computeSentiment(twit.getText()));
+		Sentiment response = Sentiment.valueOf(nlp.computeSentiment(twit.getText()));
+		twit.setValue(response);
 		return ResponseEntity.ok(twit);
+	}
+
+	@PostMapping("/sentiments/text")
+	public ResponseEntity<Sentiment> computeSentimentValue(@RequestBody String text) {
+		logger.info("Received twit: {}", text);
+		Sentiment response = Sentiment.valueOf(nlp.computeSentiment(text));
+		return ResponseEntity.ok(response);
 	}
 
 	@PostMapping("/languages")

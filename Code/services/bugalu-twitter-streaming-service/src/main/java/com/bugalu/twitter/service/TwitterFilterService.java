@@ -46,10 +46,12 @@ public class TwitterFilterService {
 					FutureTwit futureTwit = twitQue.poll();
 					boolean flag = futureTwit.getLanguageFlag().get();
 					Twit twit = futureTwit.getTwit();
+					log.info("flag: {}", flag);
 					if (flag) {
 						map.put(twit.getTopic(), twit);
+						log.info("current twit size: {}", map.size());
 					} else {
-						log.info("removing twit: {}", twit.getText());
+						log.info("{}-removing twit: {}", map.size(), twit.getText());
 					}
 				} catch (InterruptedException | ExecutionException e) {
 					e.printStackTrace();
