@@ -74,6 +74,10 @@ public class OrchestratorService {
 			try {
 				SocialMedia post = futurePost.get();
 				String key = post.getKey();
+				if (post.isUndefined()) {
+					// TODO need a better way of handling undefined posts
+					continue;
+				}
 				Map<String, Stats> result = post.computeData();
 				Stats stat = result.get(key);
 				BiFunction<String, Stats, Stats> biFunction = (k, v) -> v.aggregate(result.get(post.getKey()));

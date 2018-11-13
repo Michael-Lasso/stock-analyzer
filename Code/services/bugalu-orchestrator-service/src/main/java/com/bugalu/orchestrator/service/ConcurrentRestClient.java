@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Future;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Component;
 import com.bugalu.orchestrator.adapter.NLPAnalyzerProxy;
 import com.bugalu.orchestrator.adapter.StockProxy;
 import com.bugalu.orchestrator.adapter.TwitterProxy;
+import com.bugalu.orchestrator.domain.Sentiment;
 import com.bugalu.orchestrator.domain.SocialMedia;
 import com.bugalu.orchestrator.domain.StockDto;
 import com.bugalu.orchestrator.domain.Twit;
@@ -20,6 +23,7 @@ import com.netflix.hystrix.contrib.javanica.command.AsyncResult;
 @Component
 public class ConcurrentRestClient {
 	private static final String hystrixStr = "asyncCall";
+	private Logger log = LoggerFactory.getLogger(this.getClass());
 
 	private NLPAnalyzerProxy nlpProxy;
 	private TwitterProxy twitterProxy;
@@ -60,6 +64,9 @@ public class ConcurrentRestClient {
 			@Override
 			public Twit invoke() {
 				ResponseEntity<Twit> response = nlpProxy.computSentimentValue(twit);
+				ResponseEntity<String> response2 = nlpProxy.computSentimentValue2(twit);
+				log.info("response at orchestrator: {}", response.getBody());
+				log.info("response2 at orchestrator: {}", response2.getBody());
 				return response.getBody();
 			}
 		};
@@ -81,6 +88,8 @@ public class ConcurrentRestClient {
 		return new AsyncResult<SocialMedia>() {
 			@Override
 			public Twit invoke() {
+				log.info("Undefined for: {}", twit);
+				twit.setValue(Sentiment.UNDEFINED);
 				return twit;
 			}
 		};

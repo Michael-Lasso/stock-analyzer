@@ -3,9 +3,14 @@ package com.bugalu.orchestrator.domain;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.bugalu.orchestrator.utils.AppConstants;
 
 public class Twit implements SocialMedia {
+
+	private Logger log = LoggerFactory.getLogger(this.getClass());
 
 	private String topic;
 	private String text;
@@ -62,6 +67,7 @@ public class Twit implements SocialMedia {
 
 	@Override
 	public Map<String, Stats> computeData() {
+		log.info("computing data: {}", this.toString());
 		Map<String, Stats> result = new HashMap<>();
 		Stats stats = new Stats();
 		stats.setCount(1);
@@ -77,6 +83,12 @@ public class Twit implements SocialMedia {
 	@Override
 	public String getKey() {
 		return AppConstants.TWIT;
+	}
+
+	@Override
+	public boolean isUndefined() {
+		// TODO Auto-generated method stub
+		return value == null || value.equals(Sentiment.UNDEFINED);
 	}
 
 }

@@ -35,16 +35,20 @@ import com.twitter.hbc.httpclient.auth.OAuth1;
 @Component
 public class TwitterServiceImpl implements TwitterService {
 
-	Logger log = LoggerFactory.getLogger(TwitterServiceImpl.class.getName());
+	private Logger log = LoggerFactory.getLogger(this.getClass());
 
 	// use your own credentials - don't share them with anyone
+	@Value("${twitter.consumer.key}")
 	String consumerKey = "wn3JdP6PMFomWT3mEdSkAtkWc";
+	@Value("${twitter.consumer.secret}")
 	String consumerSecret = "A1e4hiYYwgqvQ9IwIxVUurzhLG0d9pQvhEgNOnuL2ELgsZZ6a2";
+	@Value("${twitter.token}")
 	String token = "1048599854887460864-csGwXHFNPQz0NTvruHjrHhhd7u0DfQ";
+	@Value("${twitter.secret}")
 	String secret = "h8xwLXFGmfOOOEjViktEyBftLeRSmyvLHOFtTsv2RxCCx";
-	@Value("${message.queue.size:10}")
+	@Value("${message.queue.size:1000}")
 	int msgQueSize;
-	@Value("${language.filter:en}")
+	@Value("${language.filter}")
 	String lan;
 
 	List<String> terms = Lists.newArrayList("tesla", "model 3", "elon_musk");

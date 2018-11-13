@@ -48,8 +48,14 @@ public class StockBatchService {
 			Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 				running = false;
 			}));
+			try {
+				TimeUnit.MINUTES.sleep(1);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 
 			try {
+				log.info("running for list: {}", myList);
 				List<StockDto> stocks = stockService.getStocksInfo(myList);
 				stocks.forEach(stock -> {
 					map.putIfAbsent(stock.getStockName(), new ArrayList<>());
@@ -58,11 +64,6 @@ public class StockBatchService {
 				log.info("new stocks added: {}", stocks);
 			} catch (Exception e1) {
 				e1.printStackTrace();
-			}
-			try {
-				TimeUnit.MINUTES.sleep(3);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
 			}
 		}
 	}

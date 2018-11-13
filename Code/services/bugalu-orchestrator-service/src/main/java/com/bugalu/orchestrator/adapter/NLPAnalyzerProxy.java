@@ -14,4 +14,8 @@ public interface NLPAnalyzerProxy {
 
 	@PostMapping("bugalu-nlp-analyzer-service/sentiments")
 	public ResponseEntity<Twit> computSentimentValue(@RequestBody Twit twit);
+	
+
+	@PostMapping("bugalu-nlp-analyzer-service/sentiments")
+	public ResponseEntity<String> computSentimentValue2(@RequestBody Twit twit);
 }
