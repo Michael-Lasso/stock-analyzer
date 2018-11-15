@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.bugalu.nlp.domain.Language;
-import com.bugalu.nlp.domain.Sentiment;
-import com.bugalu.nlp.domain.Twit;
+import com.bugalu.domain.twitter.Language;
+import com.bugalu.domain.twitter.Sentiment;
+import com.bugalu.domain.twitter.Twit;
 import com.bugalu.nlp.service.NLPService;
 
 @RestController

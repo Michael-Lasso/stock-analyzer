@@ -23,7 +23,7 @@ import com.amazonaws.services.comprehend.model.DetectKeyPhrasesRequest;
 import com.amazonaws.services.comprehend.model.DetectKeyPhrasesResult;
 import com.amazonaws.services.comprehend.model.DetectSentimentRequest;
 import com.amazonaws.services.comprehend.model.DetectSentimentResult;
-import com.bugalu.nlp.domain.Sentiment;
+import com.bugalu.domain.twitter.Sentiment;
 import com.langdetect.LanguageDetector;
 import com.langdetect.LanguageDetectorBuilder;
 import com.langdetect.ngram.NgramExtractors;

@@ -1,4 +1,4 @@
-package com.bugalu.twitter.domain;
+package com.bugalu.domain.twitter;
 
 import java.util.concurrent.Future;
 

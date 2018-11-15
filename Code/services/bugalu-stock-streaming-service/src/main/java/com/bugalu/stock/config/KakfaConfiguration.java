@@ -18,7 +18,7 @@ import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 
-import com.bugalu.stock.domain.StockDto;
+import com.bugalu.domain.stock.StockDto;
 
 @Configuration
 public class KakfaConfiguration {

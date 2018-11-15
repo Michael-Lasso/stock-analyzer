@@ -8,8 +8,8 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.bugalu.domain.twitter.FutureTwit;
 import com.bugalu.domain.twitter.Twit;
-import com.bugalu.twitter.domain.FutureTwit;
 
 public class TwitterFilterService {
 

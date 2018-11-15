@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import com.bugalu.twitter.domain.Language;
+import com.bugalu.domain.twitter.Language;
 
 @RibbonClient(name = "bugalu-nlp-analyzer-service")
 @FeignClient(name = "bugalu-api-gateway-server")

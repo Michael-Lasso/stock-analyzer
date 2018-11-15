@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import com.bugalu.orchestrator.domain.StockDto;
+import com.bugalu.domain.stock.StockDto;
 
 @RibbonClient(name = "bugalu-stock-streaming-service")
 @FeignClient(name = "bugalu-api-gateway-server")

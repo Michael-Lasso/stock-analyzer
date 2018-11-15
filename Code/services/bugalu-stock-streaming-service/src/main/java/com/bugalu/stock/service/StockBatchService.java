@@ -14,8 +14,8 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import com.bugalu.stock.config.AppConstants;
-import com.bugalu.stock.domain.StockDto;
+import com.bugalu.domain.stock.StockDto;
+import com.bugalu.domain.utils.AppConstants;
 
 @Component
 public class StockBatchService {

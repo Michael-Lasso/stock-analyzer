@@ -1,4 +1,4 @@
-package com.bugalu.orchestrator.domain;
+package com.bugalu.domain.twitter;
 
 public class Stats {
 

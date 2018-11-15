@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import com.bugalu.stock.domain.StockDto;
+import com.bugalu.domain.stock.StockDto;
 import com.bugalu.stock.service.StockBatchService;
 
 @Controller

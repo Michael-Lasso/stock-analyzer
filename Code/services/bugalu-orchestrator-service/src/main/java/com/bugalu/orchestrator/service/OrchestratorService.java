@@ -17,9 +17,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import com.bugalu.orchestrator.domain.SocialMedia;
-import com.bugalu.orchestrator.domain.Stats;
-import com.bugalu.orchestrator.domain.Twit;
+import com.bugalu.domain.twitter.SocialMedia;
+import com.bugalu.domain.twitter.Stats;
+import com.bugalu.domain.twitter.Twit;
 
 @Component
 public class OrchestratorService {

@@ -10,13 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+import com.bugalu.domain.stock.StockDto;
+import com.bugalu.domain.twitter.Sentiment;
+import com.bugalu.domain.twitter.SocialMedia;
+import com.bugalu.domain.twitter.Twit;
 import com.bugalu.orchestrator.adapter.NLPAnalyzerProxy;
 import com.bugalu.orchestrator.adapter.StockProxy;
 import com.bugalu.orchestrator.adapter.TwitterProxy;
-import com.bugalu.orchestrator.domain.Sentiment;
-import com.bugalu.orchestrator.domain.SocialMedia;
-import com.bugalu.orchestrator.domain.StockDto;
-import com.bugalu.orchestrator.domain.Twit;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.netflix.hystrix.contrib.javanica.command.AsyncResult;
 

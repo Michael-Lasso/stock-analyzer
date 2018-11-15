@@ -6,12 +6,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.bugalu.domain.twitter.Twit;
 import com.bugalu.orchestrator.adapter.TwitterProxy;
-import com.bugalu.orchestrator.domain.Twit;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 
 @RestController("/sentiments")
@@ -28,7 +27,7 @@ public class OrchestratorDataController {
 		return proxy.getAllTwits();
 	}
 
-//	@Scheduled(cron = "${orchestrator.schedule}")
+	// @Scheduled(cron = "${orchestrator.schedule}")
 	public void compute() {
 		log.info("hitting twits");
 		log.info("hitting: {}", proxy.getAllTwits());

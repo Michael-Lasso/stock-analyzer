@@ -10,8 +10,8 @@ import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
-import com.bugalu.stock.domain.StockDto;
-import com.bugalu.stock.domain.StockHistory;
+import com.bugalu.domain.stock.StockDto;
+import com.bugalu.domain.stock.StockHistory;
 
 import yahoofinance.Stock;
 import yahoofinance.YahooFinance;
@@ -20,13 +20,13 @@ import yahoofinance.histquotes.Interval;
 
 @Service
 public class StockService {
-	
-	//curl "http://wu-quotes.apple.com/dgw?imei=42&apptype=finance" 
-	//-H "Content-type: text/xml" -d "<?xml version='1.0' encoding='utf−8'?>
-	//<request devtype='Apple_OSX' deployver='APPLE_DASHBOARD_1_0' 
-	//app='YGoAppleStocksWidget' appver='unknown' api='finance' apiver='1.0.1' 
-	//acknotification='0000'><query id='0' timestamp='`date +%s000`' 
-	//type='getquotes'><list><symbol>GE</symbol></list></query></request>"
+
+	// curl "http://wu-quotes.apple.com/dgw?imei=42&apptype=finance"
+	// -H "Content-type: text/xml" -d "<?xml version='1.0' encoding='utf−8'?>
+	// <request devtype='Apple_OSX' deployver='APPLE_DASHBOARD_1_0'
+	// app='YGoAppleStocksWidget' appver='unknown' api='finance' apiver='1.0.1'
+	// acknotification='0000'><query id='0' timestamp='`date +%s000`'
+	// type='getquotes'><list><symbol>GE</symbol></list></query></request>"
 
 	public StockDto getStockInfo(String stockName) throws Exception {
 		Stock stock = YahooFinance.get(stockName.toUpperCase(), true);
@@ -45,7 +45,7 @@ public class StockService {
 					stock.getQuote().getChangeFromYearHighInPercent(), key.toUpperCase(), new Date());
 			stockList.add(stockObject);
 		}
-		
+
 		return stockList;
 	}
 

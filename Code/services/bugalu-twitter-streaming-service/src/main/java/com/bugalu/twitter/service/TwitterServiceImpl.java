@@ -16,9 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.bugalu.domain.twitter.FutureTwit;
+import com.bugalu.domain.twitter.Language;
 import com.bugalu.domain.twitter.Twit;
-import com.bugalu.twitter.domain.FutureTwit;
-import com.bugalu.twitter.domain.Language;
 import com.google.common.collect.Lists;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
