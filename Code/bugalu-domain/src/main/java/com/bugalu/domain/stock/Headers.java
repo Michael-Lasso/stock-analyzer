@@ -1,22 +1,5 @@
 package com.bugalu.domain.stock;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-@Data
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
-@JsonIgnoreProperties(ignoreUnknown = true)
-@JsonInclude(Include.NON_NULL)
 public class Headers {
 	private String header1;
 	private String header2;
@@ -63,4 +46,24 @@ public class Headers {
 	public void setHeader5(String header5) {
 		this.header5 = header5;
 	}
+
+	public Headers(String header1, String header2, String header3, String header4, String header5) {
+		super();
+		this.header1 = header1;
+		this.header2 = header2;
+		this.header3 = header3;
+		this.header4 = header4;
+		this.header5 = header5;
+	}
+
+	public Headers() {
+		super();
+	}
+
+	@Override
+	public String toString() {
+		return "Headers [header1=" + header1 + ", header2=" + header2 + ", header3=" + header3 + ", header4=" + header4
+				+ ", header5=" + header5 + "]";
+	}
+
 }

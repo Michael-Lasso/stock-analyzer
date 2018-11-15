@@ -2,6 +2,8 @@ package com.bugalu.twitter.domain;
 
 import java.util.concurrent.Future;
 
+import com.bugalu.domain.twitter.Twit;
+
 public class FutureTwit {
 
 	private Twit twit;

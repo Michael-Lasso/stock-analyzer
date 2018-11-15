@@ -73,7 +73,7 @@ public class Twit implements SocialMedia {
 		stats.setCount(1);
 		if (value.equals(Sentiment.NEGATIVE)) {
 			stats.setNegatives(1);
-		} else {
+		} else if (value.equals(Sentiment.POSITIVE)) {
 			stats.setPositives(1);
 		}
 		result.put(AppConstants.TWIT, stats);

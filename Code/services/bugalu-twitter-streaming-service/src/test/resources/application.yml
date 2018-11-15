@@ -1,0 +1,13 @@
+twitter: 
+  consumer:
+    key: key
+    secret: secret
+  token: token
+  secret: secret
+
+message: 
+  queue: 
+    size: 10
+
+language: 
+  filter: en

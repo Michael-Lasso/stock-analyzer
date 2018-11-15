@@ -47,12 +47,9 @@ public class OrchestratorService {
 			List<String> ids = list.stream().map(Twit::getTopic).collect(Collectors.toList());
 			service.clearTwits(ids);
 			Map<String, Future<Twit>> map = new HashMap<>();
-			// TODO change nlp service to take text rather than a twit
-			// TODO change orchestrator to reflect change
 			// TODO aggregate twits after they have been scored
 			// TODO add aggregated twits to stock price
-			// TODO put POJO in kafka queue
-			// TODO kafka consumer will persist to elastic search
+			// TODO kafka producer will publis to elastic search topic
 			for (Twit twit : list) {
 				Future<SocialMedia> futureResponse = service.getTwitSentiment(twit);
 				log.info("adding future: {}", twit.getTopic());
@@ -92,4 +89,10 @@ public class OrchestratorService {
 		}
 	}
 
+	// TODO add kafka consumer to consume stock topic
+	// TODO combine stock with social media aggregation
+	// TODO publish message to kafka to be consumed by elastic search consumer
+	public void stockOrchestrator() {
+
+	}
 }

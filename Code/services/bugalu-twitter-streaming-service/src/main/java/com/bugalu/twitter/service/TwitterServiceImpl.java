@@ -16,9 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.bugalu.domain.twitter.Twit;
 import com.bugalu.twitter.domain.FutureTwit;
 import com.bugalu.twitter.domain.Language;
-import com.bugalu.twitter.domain.Twit;
 import com.google.common.collect.Lists;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -37,21 +37,20 @@ public class TwitterServiceImpl implements TwitterService {
 
 	private Logger log = LoggerFactory.getLogger(this.getClass());
 
-	// use your own credentials - don't share them with anyone
 	@Value("${twitter.consumer.key}")
-	String consumerKey = "wn3JdP6PMFomWT3mEdSkAtkWc";
+	String consumerKey;
 	@Value("${twitter.consumer.secret}")
-	String consumerSecret = "A1e4hiYYwgqvQ9IwIxVUurzhLG0d9pQvhEgNOnuL2ELgsZZ6a2";
+	String consumerSecret;
 	@Value("${twitter.token}")
-	String token = "1048599854887460864-csGwXHFNPQz0NTvruHjrHhhd7u0DfQ";
+	String token;
 	@Value("${twitter.secret}")
-	String secret = "h8xwLXFGmfOOOEjViktEyBftLeRSmyvLHOFtTsv2RxCCx";
+	String secret;
 	@Value("${message.queue.size:1000}")
 	int msgQueSize;
 	@Value("${language.filter}")
 	String lan;
 
-	List<String> terms = Lists.newArrayList("tesla", "model 3", "elon_musk");
+	List<String> terms = Lists.newArrayList("tesla");
 
 	private Thread thread;
 	private ConcurrentHashMap<String, Twit> map;

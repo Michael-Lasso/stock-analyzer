@@ -6,15 +6,16 @@
 
 	<groupId>com.bugalu</groupId>
 	<artifactId>bugalu-analyzer</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1-SNAPSHOT</version>
 	<modules>
+		<module>bugalu-domain</module>
 		<module>bugalu-cloud-config-server</module>
-        <module>bugalu-discovery-naming-server</module>
+		<module>bugalu-discovery-naming-server</module>
 		<module>bugalu-api-gateway-server</module>
 		<module>bugalu-stock-streaming-service</module>
-        <module>bugalu-nlp-analyzer-service</module>
-        <module>bugalu-twitter-streaming-service</module>
-        <module>bugalu-orchestrator-service</module>
+		<module>bugalu-nlp-analyzer-service</module>
+		<module>bugalu-twitter-streaming-service</module>
+		<module>bugalu-orchestrator-service</module>
 	</modules>
 	<packaging>pom</packaging>
 
@@ -27,42 +28,42 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
-        <bugalu.version>0.0.1-SNAPSHOT</bugalu.version>
-        <spring-cloud.version>Finchley.SR1</spring-cloud.version>
+		<bugalu.version>0.0.1-SNAPSHOT</bugalu.version>
+		<spring-cloud.version>Finchley.SR1</spring-cloud.version>
 	</properties>
 	<dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
-            <scope>runtime</scope>
+			<scope>runtime</scope>
 		</dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-dependencies</artifactId>
-                <version>${spring-cloud.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>${spring-cloud.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
 </project>

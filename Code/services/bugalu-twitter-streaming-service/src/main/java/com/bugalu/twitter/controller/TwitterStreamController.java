@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.bugalu.twitter.domain.Twit;
+import com.bugalu.domain.twitter.Twit;
 import com.bugalu.twitter.service.TwitterService;
 
 @RestController

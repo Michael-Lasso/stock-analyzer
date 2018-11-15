@@ -2,23 +2,6 @@ package com.bugalu.domain.stock;
 
 import java.math.BigDecimal;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-@Data
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
-@JsonIgnoreProperties(ignoreUnknown = true)
-@JsonInclude(Include.NON_NULL)
 public class StockHistory {
 	private String symbol;
 	private String date;
@@ -65,5 +48,26 @@ public class StockHistory {
 	public void setClose(BigDecimal close) {
 		this.close = close;
 	}
+
+	public StockHistory(String symbol, String date, BigDecimal high, BigDecimal low, BigDecimal close) {
+		super();
+		this.symbol = symbol;
+		this.date = date;
+		this.high = high;
+		this.low = low;
+		this.close = close;
+	}
+
+	public StockHistory() {
+		super();
+	}
+
+	@Override
+	public String toString() {
+		return "StockHistory [symbol=" + symbol + ", date=" + date + ", high=" + high + ", low=" + low + ", close="
+				+ close + "]";
+	}
+	
+	
 
 }

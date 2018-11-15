@@ -4,68 +4,57 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
-
-import javax.annotation.PostConstruct;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
+import com.bugalu.stock.config.AppConstants;
 import com.bugalu.stock.domain.StockDto;
 
-@Service
+@Component
 public class StockBatchService {
 	private Logger log = LoggerFactory.getLogger(this.getClass());
 
-	private Thread thread;
-	private Map<String, List<StockDto>> map;
+	private final KafkaTemplate<String, StockDto> kafkaTemplate;
 	private final StockService stockService;
-	private static volatile boolean running = true;
+	private Map<String, List<StockDto>> map;
 
-	@Value("#{'${stock.service.stocks}'.split(',')}")
+	@Value("#{'${stock.service.stocks:TSLA,SPY}'.split(',')}")
 	private List<String> myList;
 
 	@Autowired
-	public StockBatchService(StockService stockService) {
+	public StockBatchService(StockService stockService, KafkaTemplate<String, StockDto> kafkaTemplate) {
 		this.stockService = stockService;
-	}
-
-	@PostConstruct
-	public void init() {
+		this.kafkaTemplate = kafkaTemplate;
 		map = new ConcurrentHashMap<>();
-		Runnable runnable = () -> {
-			run();
-		};
-		thread = new Thread(runnable);
-		thread.start();
 	}
 
+	@Scheduled(cron = "* */2 * * * *")
 	private void run() {
-		while (running) {
-			Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-				running = false;
-			}));
-			try {
-				TimeUnit.MINUTES.sleep(1);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-
-			try {
-				log.info("running for list: {}", myList);
-				List<StockDto> stocks = stockService.getStocksInfo(myList);
-				stocks.forEach(stock -> {
-					map.putIfAbsent(stock.getStockName(), new ArrayList<>());
-					map.get(stock.getStockName()).add(stock);
-				});
-				log.info("new stocks added: {}", stocks);
-			} catch (Exception e1) {
-				e1.printStackTrace();
-			}
+		try {
+			log.info("running for list: {}", myList);
+			List<StockDto> stocks = stockService.getStocksInfo(myList);
+			stocks.forEach(stock -> {
+				map.putIfAbsent(stock.getStockName(), new ArrayList<>());
+				map.get(stock.getStockName()).add(stock);
+				kafkaTemplate.send(AppConstants.STOCK_TOPIC, AppConstants.KAFKA_STOCK_KEY, stock);
+				log.info("new stocks published: {}", stocks);
+			});
+		} catch (Exception e1) {
+			e1.printStackTrace();
 		}
+
+	}
+
+	@KafkaListener(topics = "stock_topic", groupId = "group_json", containerFactory = "messageKafkaListenerFactory")
+	public void consumeJson(StockDto stock) {
+		System.out.println("Consumed JSON Message: " + stock);
 	}
 
 	public List<StockDto> getStocks(String key) {

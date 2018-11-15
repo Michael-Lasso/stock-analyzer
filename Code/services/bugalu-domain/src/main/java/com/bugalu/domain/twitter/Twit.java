@@ -4,18 +4,7 @@ public class Twit {
 	private String topic;
 	private String text;
 	private int countWeight;
-	private String value;
-
-	public Twit() {
-	}
-
-	public Twit(String topic, String text, int countWeight, String value) {
-		super();
-		this.topic = topic;
-		this.text = text;
-		this.countWeight = countWeight;
-		this.value = value;
-	}
+	private Sentiment value;
 
 	public String getTopic() {
 		return topic;
@@ -41,12 +30,23 @@ public class Twit {
 		this.countWeight = countWeight;
 	}
 
-	public String getValue() {
+	public Sentiment getValue() {
 		return value;
 	}
 
-	public void setValue(String value) {
+	public void setValue(Sentiment value) {
 		this.value = value;
+	}
+
+	public Twit(String topic, String text, int countWeight, Sentiment value) {
+		super();
+		this.topic = topic;
+		this.text = text;
+		this.countWeight = countWeight;
+		this.value = value;
+	}
+
+	public Twit() {
 	}
 
 	@Override
