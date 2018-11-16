@@ -52,11 +52,6 @@ public class StockBatchService {
 
 	}
 
-	@KafkaListener(topics = "stock_topic", groupId = "group_json", containerFactory = "messageKafkaListenerFactory")
-	public void consumeJson(StockDto stock) {
-		System.out.println("Consumed JSON Message: " + stock);
-	}
-
 	public List<StockDto> getStocks(String key) {
 		return map.get(key);
 	}

@@ -100,6 +100,7 @@ public class TwitterServiceImpl implements TwitterService {
 		twitterFilterService.start();
 	}
 
+	// TODO change to scheduled task
 	public void run() {
 
 		log.info("Setup");

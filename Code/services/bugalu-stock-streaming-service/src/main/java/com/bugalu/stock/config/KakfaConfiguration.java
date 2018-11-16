@@ -23,8 +23,8 @@ import com.bugalu.domain.stock.StockDto;
 @Configuration
 public class KakfaConfiguration {
 
-	private String host = "192.168.1.8";
-	// private String host = "127.0.0.1";
+//	private String host = "192.168.1.8";
+	 private String host = "127.0.0.1";
 	private String port = "9092";
 
 	@Bean
@@ -39,45 +39,7 @@ public class KakfaConfiguration {
 	}
 
 	@Bean
-	public ConsumerFactory<String, StockDto> consumerFactory() {
-		Map<String, Object> config = new HashMap<>();
-
-		config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, host + ":" + port);
-		config.put(ConsumerConfig.GROUP_ID_CONFIG, "group_json");
-		config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-		config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-
-		return new DefaultKafkaConsumerFactory<>(config);
-	}
-
-	@Bean
 	public KafkaTemplate<String, StockDto> kafkaTemplate() {
 		return new KafkaTemplate<>(producerFactory());
-	}
-
-	@Bean
-	public ConcurrentKafkaListenerContainerFactory<String, StockDto> kafkaListenerContainerFactory() {
-		ConcurrentKafkaListenerContainerFactory<String, StockDto> factory = new ConcurrentKafkaListenerContainerFactory();
-		factory.setConsumerFactory(consumerFactory());
-		return factory;
-	}
-
-	@Bean
-	public ConsumerFactory<String, StockDto> messageConsumerFactory() {
-		Map<String, Object> config = new HashMap<>();
-
-		config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, host + ":" + port);
-		config.put(ConsumerConfig.GROUP_ID_CONFIG, "group_json");
-		config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-		config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-		return new DefaultKafkaConsumerFactory<>(config, new StringDeserializer(),
-				new JsonDeserializer<>(StockDto.class));
-	}
-
-	@Bean
-	public ConcurrentKafkaListenerContainerFactory<String, StockDto> messageKafkaListenerFactory() {
-		ConcurrentKafkaListenerContainerFactory<String, StockDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
-		factory.setConsumerFactory(messageConsumerFactory());
-		return factory;
 	}
 }

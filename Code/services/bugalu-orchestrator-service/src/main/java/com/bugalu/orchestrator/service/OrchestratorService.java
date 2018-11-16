@@ -14,9 +14,10 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
+import com.bugalu.domain.stock.StockDto;
 import com.bugalu.domain.twitter.SocialMedia;
 import com.bugalu.domain.twitter.Stats;
 import com.bugalu.domain.twitter.Twit;
@@ -36,7 +37,7 @@ public class OrchestratorService {
 		statsMap = new ConcurrentHashMap<>();
 	}
 
-	@Scheduled(cron = "${orchestrator.schedule}")
+//	@Scheduled(cron = "${orchestrator.schedule}")
 	public void computeSocialMediaData() {
 		log.info("running: {}", new Date());
 		try {
@@ -62,7 +63,7 @@ public class OrchestratorService {
 		}
 	}
 
-	@Scheduled(cron = "*/50 * * * * *")
+// @Scheduled(cron = "*/50 * * * * *")
 	public void computFutures() {
 		int size = socialMediaQueue.size();
 		log.info("running orchestrator backlog size: {} on: {}", size, new Date());
@@ -89,10 +90,11 @@ public class OrchestratorService {
 		}
 	}
 
-	// TODO add kafka consumer to consume stock topic
 	// TODO combine stock with social media aggregation
 	// TODO publish message to kafka to be consumed by elastic search consumer
-	public void stockOrchestrator() {
-
+	@KafkaListener(topics = "stock_topic2", groupId = "group_json", containerFactory = "messageKafkaListenerFactory")
+	public void consumeJson(StockDto stock) {
+		log.info("Consumed stock: {}", stock);
+//		System.exit(0);
 	}
 }
