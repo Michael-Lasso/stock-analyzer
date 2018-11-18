@@ -31,14 +31,13 @@ public class NLPSentimentController {
 
 	@PostMapping("/sentiments/text")
 	public ResponseEntity<Sentiment> computeSentimentValue(@RequestBody String text) {
-		logger.info("Received twit: {}", text);
+		logger.info("Received text: {}", text);
 		Sentiment response = Sentiment.valueOf(nlp.computeSentiment(text));
 		return ResponseEntity.ok(response);
 	}
 
 	@PostMapping("/languages")
 	public ResponseEntity<Boolean> computeLanguage(@RequestBody Language language) {
-		logger.info("Detecting language");
 		boolean response = nlp.filterLanguageByText(language.getText(), language.getLanguage());
 		return ResponseEntity.ok(response);
 	}

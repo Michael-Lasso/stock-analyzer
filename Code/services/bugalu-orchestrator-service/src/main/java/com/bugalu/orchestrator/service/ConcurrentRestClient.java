@@ -64,9 +64,6 @@ public class ConcurrentRestClient {
 			@Override
 			public Twit invoke() {
 				ResponseEntity<Twit> response = nlpProxy.computSentimentValue(twit);
-				ResponseEntity<String> response2 = nlpProxy.computSentimentValue2(twit);
-				log.info("response at orchestrator: {}", response.getBody());
-				log.info("response2 at orchestrator: {}", response2.getBody());
 				return response.getBody();
 			}
 		};

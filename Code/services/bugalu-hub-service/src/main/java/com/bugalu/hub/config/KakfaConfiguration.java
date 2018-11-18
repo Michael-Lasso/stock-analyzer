@@ -1,4 +1,4 @@
-package com.bugalu.orchestrator.config;
+package com.bugalu.hub.config;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,7 +31,7 @@ public class KakfaConfiguration {
 	// @Value("kafka.port")
 	// private String port;
 
-//	private String host = "127.0.0.1";
+	// private String host = "127.0.0.1";
 	private String host = "192.168.1.8";
 	private String port = "9092";
 
@@ -52,7 +52,7 @@ public class KakfaConfiguration {
 	}
 
 	@Bean
-	public ConsumerFactory<String, StockDto> consumerFactory() {
+	public ConsumerFactory<String, StockDocument> consumerFactory() {
 		Map<String, Object> config = new HashMap<>();
 
 		config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, host + ":" + port);
@@ -64,14 +64,14 @@ public class KakfaConfiguration {
 	}
 
 	@Bean
-	public ConcurrentKafkaListenerContainerFactory<String, StockDto> kafkaListenerContainerFactory() {
-		ConcurrentKafkaListenerContainerFactory<String, StockDto> factory = new ConcurrentKafkaListenerContainerFactory();
+	public ConcurrentKafkaListenerContainerFactory<String, StockDocument> kafkaListenerContainerFactory() {
+		ConcurrentKafkaListenerContainerFactory<String, StockDocument> factory = new ConcurrentKafkaListenerContainerFactory();
 		factory.setConsumerFactory(consumerFactory());
 		return factory;
 	}
 
 	@Bean
-	public ConsumerFactory<String, StockDto> messageConsumerFactory() {
+	public ConsumerFactory<String, StockDocument> messageConsumerFactory() {
 		Map<String, Object> config = new HashMap<>();
 
 		config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, host + ":" + port);
@@ -80,12 +80,12 @@ public class KakfaConfiguration {
 		config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
 
 		return new DefaultKafkaConsumerFactory<>(config, new StringDeserializer(),
-				new JsonDeserializer<>(StockDto.class));
+				new JsonDeserializer<>(StockDocument.class));
 	}
 
 	@Bean
-	public ConcurrentKafkaListenerContainerFactory<String, StockDto> messageKafkaListenerFactory() {
-		ConcurrentKafkaListenerContainerFactory<String, StockDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
+	public ConcurrentKafkaListenerContainerFactory<String, StockDocument> messageKafkaListenerFactory() {
+		ConcurrentKafkaListenerContainerFactory<String, StockDocument> factory = new ConcurrentKafkaListenerContainerFactory<>();
 		factory.setConsumerFactory(messageConsumerFactory());
 		return factory;
 	}

@@ -1,6 +1,7 @@
 package com.bugalu.twitter.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
@@ -50,7 +51,8 @@ public class TwitterServiceImpl implements TwitterService {
 	@Value("${language.filter}")
 	String lan;
 
-	List<String> terms = Lists.newArrayList("tesla");
+	List<String> terms = Lists.newArrayList("tesla", "@elonmusk");
+	private String stockRelated = "TSLA";
 
 	private Thread thread;
 	private ConcurrentHashMap<String, Twit> map;
@@ -64,15 +66,19 @@ public class TwitterServiceImpl implements TwitterService {
 		this.concurrentRestClient = concurrentRestClient;
 	}
 
-	private static Twit extractIdFromTweet(String tweetJson) {
+	private Twit extractIdFromTweet(String tweetJson) {
 		String text = jsonParser.parse(tweetJson).getAsJsonObject().get("text").getAsString();
-		String topic = jsonParser.parse(tweetJson).getAsJsonObject().get("id_str").getAsString();
+		String id = jsonParser.parse(tweetJson).getAsJsonObject().get("id_str").getAsString();
 		JsonObject countWeightObj = jsonParser.parse(tweetJson).getAsJsonObject().getAsJsonObject("user");
 		String countWeight = countWeightObj.get("followers_count").getAsString();
 		Twit twit = new Twit();
 		twit.setCountWeight(Integer.parseInt(countWeight));
 		twit.setText(text);
-		twit.setTopic(topic);
+		twit.setId(id);
+		twit.setTerms(terms);
+		twit.setStockRelated(stockRelated);
+		// TODO change to retrieve date from tweetJwon, works for now
+		twit.setDateCreated(new Date());
 		return twit;
 	}
 
@@ -100,7 +106,6 @@ public class TwitterServiceImpl implements TwitterService {
 		twitterFilterService.start();
 	}
 
-	// TODO change to scheduled task
 	public void run() {
 
 		log.info("Setup");
@@ -138,19 +143,19 @@ public class TwitterServiceImpl implements TwitterService {
 
 	public Client createTwitterClient(BlockingQueue<String> msgQueue) {
 
-		Hosts hosebirdHosts = new HttpHosts(Constants.STREAM_HOST);
-		StatusesFilterEndpoint hosebirdEndpoint = new StatusesFilterEndpoint();
+		Hosts curatorHosts = new HttpHosts(Constants.STREAM_HOST);
+		StatusesFilterEndpoint curatorEndpoint = new StatusesFilterEndpoint();
 
-		hosebirdEndpoint.trackTerms(terms);
+		curatorEndpoint.trackTerms(terms);
 
 		Authentication twitterCurator = new OAuth1(consumerKey, consumerSecret, token, secret);
 
-		ClientBuilder builder = new ClientBuilder().name("twitter-curator-Client-01").hosts(hosebirdHosts)
-				.authentication(twitterCurator).endpoint(hosebirdEndpoint)
+		ClientBuilder builder = new ClientBuilder().name("twitter-curator-Client-01").hosts(curatorHosts)
+				.authentication(twitterCurator).endpoint(curatorEndpoint)
 				.processor(new StringDelimitedProcessor(msgQueue));
 
-		Client hosebirdClient = builder.build();
-		return hosebirdClient;
+		Client curatorClient = builder.build();
+		return curatorClient;
 	}
 
 	@Override

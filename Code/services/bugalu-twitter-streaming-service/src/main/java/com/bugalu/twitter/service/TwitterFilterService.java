@@ -48,7 +48,7 @@ public class TwitterFilterService {
 					Twit twit = futureTwit.getTwit();
 					log.info("flag: {}", flag);
 					if (flag) {
-						map.put(twit.getTopic(), twit);
+						map.put(twit.getId(), twit);
 						log.info("current twit size: {}", map.size());
 					} else {
 						log.info("{}-removing twit: {}", map.size(), twit.getText());

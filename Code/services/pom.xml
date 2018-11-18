@@ -9,6 +9,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<modules>
 		<module>bugalu-domain</module>
+		<module>bugalu-hub-service</module>
 		<module>bugalu-cloud-config-server</module>
 		<module>bugalu-discovery-naming-server</module>
 		<module>bugalu-api-gateway-server</module>

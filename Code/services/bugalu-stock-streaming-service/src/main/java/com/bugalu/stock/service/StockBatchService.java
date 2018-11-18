@@ -25,7 +25,7 @@ public class StockBatchService {
 	private final StockService stockService;
 	private Map<String, List<StockDto>> map;
 
-	@Value("#{'${stock.service.stocks:TSLA,SPY}'.split(',')}")
+	@Value("#{'${stock.service.stocks}'.split(',')}")
 	private List<String> myList;
 
 	@Autowired
@@ -35,16 +35,16 @@ public class StockBatchService {
 		map = new ConcurrentHashMap<>();
 	}
 
-	@Scheduled(cron = "* */2 * * * *")
-	private void run() {
+	@Scheduled(cron = "10,40 * * * * *")
+	private void fetchStocks() {
 		try {
 			log.info("running for list: {}", myList);
 			List<StockDto> stocks = stockService.getStocksInfo(myList);
 			stocks.forEach(stock -> {
 				map.putIfAbsent(stock.getStockName(), new ArrayList<>());
 				map.get(stock.getStockName()).add(stock);
-				kafkaTemplate.send(AppConstants.STOCK_TOPIC, AppConstants.KAFKA_STOCK_KEY, stock);
-				log.info("new stocks published: {}", stocks);
+				kafkaTemplate.send(AppConstants.KAFKA_STOCK_TOPIC, AppConstants.KAFKA_STOCK_KEY, stock);
+				log.info("new stocks published: {}", stock);
 			});
 		} catch (Exception e1) {
 			e1.printStackTrace();
