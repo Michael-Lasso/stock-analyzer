@@ -23,9 +23,9 @@ public class NLPSentimentController {
 
 	@PostMapping("/sentiments")
 	public ResponseEntity<Twit> computeSentimentValue(@RequestBody Twit twit) {
-		logger.info("Received twit: {}", twit);
 		Sentiment response = Sentiment.valueOf(nlp.computeSentiment(twit.getText()));
 		twit.setValue(response);
+		logger.info("Received twit: {}", twit);
 		return ResponseEntity.ok(twit);
 	}
 

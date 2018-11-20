@@ -9,7 +9,6 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<modules>
 		<module>bugalu-domain</module>
-		<module>bugalu-hub-service</module>
 		<module>bugalu-cloud-config-server</module>
 		<module>bugalu-discovery-naming-server</module>
 		<module>bugalu-api-gateway-server</module>
@@ -17,6 +16,7 @@
 		<module>bugalu-nlp-analyzer-service</module>
 		<module>bugalu-twitter-streaming-service</module>
 		<module>bugalu-orchestrator-service</module>
+		<module>bugalu-hub-service</module>
 	</modules>
 	<packaging>pom</packaging>
 

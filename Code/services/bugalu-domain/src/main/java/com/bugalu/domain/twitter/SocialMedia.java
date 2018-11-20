@@ -9,9 +9,13 @@ public interface SocialMedia {
 	String getKey();
 
 	boolean isUndefined();
-	
+
 	Post getPostBody();
-	
+
 	String getId();
+
+	String getPostText();
+
+	long getPostScore();
 
 }

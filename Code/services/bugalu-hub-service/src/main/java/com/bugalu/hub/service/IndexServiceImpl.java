@@ -1,6 +1,5 @@
 package com.bugalu.hub.service;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -12,8 +11,6 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
 import com.bugalu.domain.stock.StockDocument;
-import com.bugalu.domain.stock.StockDto;
-import com.bugalu.domain.twitter.Stats;
 import com.bugalu.domain.utils.AppConstants;
 import com.bugalu.hub.domain.Customers;
 

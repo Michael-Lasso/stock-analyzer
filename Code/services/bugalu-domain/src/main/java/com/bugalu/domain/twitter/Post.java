@@ -7,12 +7,18 @@ public class Post {
 	private Sentiment sentiment;
 	private int weightCount;
 	private String key;
+	private String id;
 
-	public Post(Date createdDate, Sentiment sentiment, int weightCount, String key) {
+	public Post(Date createdDate, Sentiment sentiment, int weightCount, String key, String id) {
 		this.createdDate = createdDate;
 		this.sentiment = sentiment;
 		this.weightCount = weightCount;
 		this.key = key;
+		this.id = id;
+	}
+
+	public String getId() {
+		return id;
 	}
 
 	public String getKey() {

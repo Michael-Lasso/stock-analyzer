@@ -120,7 +120,17 @@ public class Twit implements SocialMedia {
 
 	@Override
 	public Post getPostBody() {
-		return new Post(dateCreated, value, countWeight, AppConstants.TWIT);
+		return new Post(dateCreated, value, countWeight, AppConstants.TWIT, id);
+	}
+
+	@Override
+	public String getPostText() {
+		return this.text;
+	}
+
+	@Override
+	public long getPostScore() {
+		return this.countWeight;
 	}
 
 }

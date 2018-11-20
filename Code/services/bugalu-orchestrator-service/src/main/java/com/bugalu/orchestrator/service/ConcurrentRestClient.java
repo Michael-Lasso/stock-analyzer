@@ -18,6 +18,7 @@ import com.bugalu.orchestrator.adapter.NLPAnalyzerProxy;
 import com.bugalu.orchestrator.adapter.StockProxy;
 import com.bugalu.orchestrator.adapter.TwitterProxy;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 import com.netflix.hystrix.contrib.javanica.command.AsyncResult;
 
 @Component
@@ -58,7 +59,13 @@ public class ConcurrentRestClient {
 		};
 	}
 
-	@HystrixCommand(groupKey = hystrixStr, commandKey = hystrixStr, fallbackMethod = "fallBackSentiment")
+	@HystrixCommand(groupKey = "StoreSubmission", commandKey = "StoreSubmission", threadPoolKey = "StoreSubmission", commandProperties = {
+			@HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "180000"),
+			@HystrixProperty(name = "circuitBreaker.requestVolumeThreshold", value = "20"),
+			@HystrixProperty(name = "circuitBreaker.sleepWindowInMilliseconds", value = "180000"),
+			@HystrixProperty(name = "metrics.rollingStats.timeInMilliseconds", value = "180000") }, threadPoolProperties = {
+					@HystrixProperty(name = "coreSize", value = "30"),
+					@HystrixProperty(name = "metrics.rollingStats.timeInMilliseconds", value = "180000") }, fallbackMethod = "fallBackSentiment")
 	public Future<SocialMedia> getTwitSentiment(Twit twit) {
 		return new AsyncResult<SocialMedia>() {
 			@Override

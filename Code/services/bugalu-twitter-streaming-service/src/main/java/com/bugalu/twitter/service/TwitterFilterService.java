@@ -36,7 +36,7 @@ public class TwitterFilterService {
 	public void run() {
 		while (running) {
 			try {
-				TimeUnit.MINUTES.sleep(1);
+				TimeUnit.SECONDS.sleep(25);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -46,10 +46,8 @@ public class TwitterFilterService {
 					FutureTwit futureTwit = twitQue.poll();
 					boolean flag = futureTwit.getLanguageFlag().get();
 					Twit twit = futureTwit.getTwit();
-					log.info("flag: {}", flag);
 					if (flag) {
 						map.put(twit.getId(), twit);
-						log.info("current twit size: {}", map.size());
 					} else {
 						log.info("{}-removing twit: {}", map.size(), twit.getText());
 					}
@@ -57,6 +55,7 @@ public class TwitterFilterService {
 					e.printStackTrace();
 				}
 			}
+			log.info("current twit size: {}", map.size());
 			Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 				running = false;
 			}));
