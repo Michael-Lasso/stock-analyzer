@@ -73,11 +73,11 @@ public class TwitterServiceImpl implements TwitterService {
 		String countWeight = countWeightObj.get("followers_count").getAsString();
 		Twit twit = new Twit();
 		twit.setCountWeight(Integer.parseInt(countWeight));
-		twit.setText(text);
+		twit.setText(text.replaceAll("[\\r\\n]+", ""));
 		twit.setId(id);
 		twit.setTerms(terms);
 		twit.setStockRelated(stockRelated);
-		// TODO change to retrieve date from tweetJwon, works for now
+		// TODO change to retrieve date from tweetJson, works for now
 		twit.setDateCreated(new Date());
 		return twit;
 	}

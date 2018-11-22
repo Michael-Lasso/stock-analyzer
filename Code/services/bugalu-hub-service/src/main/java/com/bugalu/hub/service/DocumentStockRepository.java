@@ -16,22 +16,20 @@
 
 package com.bugalu.hub.service;
 
-import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.annotations.Query;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 
-import com.bugalu.hub.domain.Customers;
+import com.bugalu.hub.domain.IndexStockDocument;
 
-public interface DocumentStockRepository extends ElasticsearchRepository<Customers, String> {
+public interface DocumentStockRepository extends ElasticsearchRepository<IndexStockDocument, String> {
 
-	public Customers findByFirstName(String firstName);
+	public Optional<IndexStockDocument> findById(String id);
 
-	public List<Customers> findByLastName(String lastName);
-	
-    @Query("{\"bool\": {\"must\": [{\"match\": {\"authors.name\": \"?0\"}}]}}")
-    Page<Customers> findByAuthorsNameUsingCustomQuery(String name, Pageable pageable);
+	@Query("{\"bool\": {\"must\": [{\"match\": {\"authors.name\": \"?0\"}}]}}")
+	Page<IndexStockDocument> findByAuthorsNameUsingCustomQuery(String name, Pageable pageable);
 
 }

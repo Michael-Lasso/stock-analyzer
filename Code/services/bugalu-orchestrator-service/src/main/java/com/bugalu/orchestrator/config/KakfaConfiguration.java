@@ -7,7 +7,6 @@ import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
@@ -31,8 +30,8 @@ public class KakfaConfiguration {
 	// @Value("kafka.port")
 	// private String port;
 
-//	private String host = "127.0.0.1";
-	private String host = "192.168.1.8";
+	// private String host = "127.0.0.1";
+	private String host = "192.168.1.9";
 	private String port = "9092";
 
 	@Bean
@@ -65,7 +64,7 @@ public class KakfaConfiguration {
 
 	@Bean
 	public ConcurrentKafkaListenerContainerFactory<String, StockDto> kafkaListenerContainerFactory() {
-		ConcurrentKafkaListenerContainerFactory<String, StockDto> factory = new ConcurrentKafkaListenerContainerFactory();
+		ConcurrentKafkaListenerContainerFactory<String, StockDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
 		factory.setConsumerFactory(consumerFactory());
 		return factory;
 	}

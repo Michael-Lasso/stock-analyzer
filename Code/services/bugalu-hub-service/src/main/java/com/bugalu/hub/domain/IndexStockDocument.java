@@ -1,13 +1,20 @@
-package com.bugalu.domain.stock;
+package com.bugalu.hub.domain;
 
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.elasticsearch.annotations.Document;
+
+import com.bugalu.domain.stock.StockDto;
+import com.bugalu.domain.stock.TopScores;
 import com.bugalu.domain.twitter.Stats;
 
-public class StockDocument {
+@Document(indexName = "stock_document", type = "document", shards = 1, replicas = 0, refreshInterval = "-1")
+public class IndexStockDocument {
 
+	@Id
 	private String id;
 	private StockDto stock;
 	private Map<String, Stats> statsMap;
@@ -74,7 +81,9 @@ public class StockDocument {
 
 	@Override
 	public String toString() {
-		return "StockDocument [stock=" + stock + ", statsMap=" + statsMap + "]";
+		return "IndexStockDocument [id=" + id + ", stock=" + stock + ", statsMap=" + statsMap + ", goodScores="
+				+ goodScores + ", badScores=" + badScores + ", neutralScores=" + neutralScores + ", createdDate="
+				+ createdDate + "]";
 	}
 
 }

@@ -7,7 +7,6 @@ import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
@@ -20,7 +19,6 @@ import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 
 import com.bugalu.domain.stock.StockDocument;
-import com.bugalu.domain.stock.StockDto;
 import com.bugalu.domain.utils.AppConstants;
 
 @Configuration
@@ -32,7 +30,7 @@ public class KakfaConfiguration {
 	// private String port;
 
 	// private String host = "127.0.0.1";
-	private String host = "192.168.1.8";
+	private String host = "192.168.1.9";
 	private String port = "9092";
 
 	@Bean
@@ -65,7 +63,7 @@ public class KakfaConfiguration {
 
 	@Bean
 	public ConcurrentKafkaListenerContainerFactory<String, StockDocument> kafkaListenerContainerFactory() {
-		ConcurrentKafkaListenerContainerFactory<String, StockDocument> factory = new ConcurrentKafkaListenerContainerFactory();
+		ConcurrentKafkaListenerContainerFactory<String, StockDocument> factory = new ConcurrentKafkaListenerContainerFactory<>();
 		factory.setConsumerFactory(consumerFactory());
 		return factory;
 	}

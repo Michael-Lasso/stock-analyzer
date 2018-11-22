@@ -1,7 +1,5 @@
 package com.bugalu.hub.service;
 
-import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -13,6 +11,8 @@ import org.springframework.stereotype.Component;
 import com.bugalu.domain.stock.StockDocument;
 import com.bugalu.domain.utils.AppConstants;
 import com.bugalu.hub.domain.Customers;
+import com.bugalu.hub.domain.IndexStockDocument;
+import com.bugalu.hub.domain.StockDocumentTranslator;
 
 @Component
 public class IndexServiceImpl implements IndexService {
@@ -23,36 +23,20 @@ public class IndexServiceImpl implements IndexService {
 	private DocumentStockRepository repository;
 
 	@Override
-	public List<String> retrievePhrases(String text) {
+	public void testIndex(String text) {
 		Customers c = new Customers();
 		c.setFirstName("test".concat(UUID.randomUUID().toString()));
 		c.setId(text);
 		c.setLastName("lasso");
-		repository.save(c);
-		return null;
-	}
-
-	@Override
-	public String computeSentiment(String text) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Map<String, Double> detectLanguate(String text) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean filterLanguageByText(String text, String language) {
-		// TODO Auto-generated method stub
-		return false;
+		// repository.save(c);
 	}
 
 	@KafkaListener(topics = AppConstants.KAFKA_STOCK_DOCUMENT_TOPIC, groupId = AppConstants.KAFKA_STOCK_DOCUMENT_GROUP, containerFactory = "messageKafkaListenerFactory")
 	public void consumeJson(StockDocument stock) {
-		log.info("consumin stock document: {}", stock);
+		IndexStockDocument indexDocument = StockDocumentTranslator.translate(stock);
+		log.info("Document ready for indexing: {}", indexDocument);
+		// index document
+		repository.save(indexDocument);
 	}
 
 }

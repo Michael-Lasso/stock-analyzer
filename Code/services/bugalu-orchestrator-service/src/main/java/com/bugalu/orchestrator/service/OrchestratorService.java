@@ -12,6 +12,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -31,7 +32,6 @@ import com.bugalu.domain.twitter.Stats;
 import com.bugalu.domain.twitter.Twit;
 import com.bugalu.domain.utils.AppConstants;
 import com.google.common.collect.MinMaxPriorityQueue;
-import com.netflix.hystrix.HystrixThreadPoolProperties;
 
 @Component
 public class OrchestratorService {
@@ -40,13 +40,17 @@ public class OrchestratorService {
 	private static final int SCORE_MAX_SIZE = 15;
 	private static final long POST_LIMIT = 5;
 
+	private static int COUNTER = 0;
+	private final static String DOC_ID = "index-";
+
 	private final ConcurrentRestClient service;
-	final private ConcurrentLinkedQueue<Future<SocialMedia>> socialMediaQueue;
-	final private PriorityQueue<Post> postQueue;
-	final private MinMaxPriorityQueue<TopScores> goodScores;
-	final private MinMaxPriorityQueue<TopScores> badScores;
-	final private MinMaxPriorityQueue<TopScores> neutralScores;
-	final private Map<String, Stats> statsMap;
+	private final ConcurrentLinkedQueue<Future<SocialMedia>> socialMediaQueue;
+	private final PriorityQueue<Post> postQueue;
+	// TODO change to map with key as the stock name
+	private final MinMaxPriorityQueue<TopScores> goodScores;
+	private final MinMaxPriorityQueue<TopScores> badScores;
+	private final MinMaxPriorityQueue<TopScores> neutralScores;
+	private final Map<String, Stats> statsMap;
 	private final KafkaTemplate<String, StockDocument> kafkaTemplate;
 
 	@Autowired
@@ -71,19 +75,26 @@ public class OrchestratorService {
 			Future<List<Twit>> twits = service.getAllTwits();
 			List<Twit> list = twits.get();
 			log.info("Computing twit size: {}", list.size());
+			// TODO change how list is populated for deletion, (only add IDs after they have
+			// been push to queue)
 			List<String> ids = list.stream().map(Twit::getId).collect(Collectors.toList());
 			service.clearTwits(ids);
+			int counter = 0;
 			for (Twit twit : list) {
+				counter++;
+				//TODO change payload to string and build twit after cliend received the response
 				Future<SocialMedia> futureResponse = service.getTwitSentiment(twit);
-				log.info("adding future: {}", twit.getId());
 				socialMediaQueue.add(futureResponse);
+				if (counter == 5) {
+					break;
+				}
 			}
+			log.info("added future twits: {}", socialMediaQueue.size());// list.stream().map(Twit::getId).collect(Collectors.toList()));
 		} catch (InterruptedException | ExecutionException e) {
 			e.printStackTrace();
 		}
 	}
 
-	// TODO add a concurrent queue to keep track of twit time for deletion
 	@Scheduled(cron = "*/50 */2 * * * *")
 	public void computFutures() {
 		int size = socialMediaQueue.size();
@@ -105,26 +116,28 @@ public class OrchestratorService {
 				if (stat.getNegatives() > 0 || stat.getPositives() > 0) {
 					log.info("!!!!!!found a sentiment: {}", post);
 				}
+				// TODO need to remove extra space/indentation/lines of text
 				statsMap.computeIfPresent(post.getKey(), biFunction);
 				statsMap.putIfAbsent(post.getKey(), result.get(post.getKey()));
 				postQueue.add(post.getPostBody());
 				populateMap(post);
-				log.info("PRIORITY QUEUE: {}", postQueue.size());
 			} catch (InterruptedException | ExecutionException e) {
 				e.printStackTrace();
 			}
 		}
+		log.info("PRIORITY QUEUE: {}", postQueue.size());
 		log.info("-------------------------MAPS-------------------------");
 		log.info("good ones: {} - {}", goodScores.size(), goodScores);
 		log.info("bad ones: {} - {}", badScores.size(), badScores);
 		log.info("neutral ones: {} - {}", neutralScores.size(), neutralScores);
+		log.info("sample sequence: ", neutralScores.stream().map(TopScores::getScore).collect(Collectors.toList()));
 		log.info("-------------------------MAPS-------------------------");
 	}
 
 	@Scheduled(cron = "0 */5 * * * *")
 	private void deleteAllPosts() {
 		log.info("stats map before: {}", statsMap);
-		BiPredicate<Date, Date> pred = (currentTime, postTime) -> postTime.getTime() - currentTime.getTime() > 200000L;
+		BiPredicate<Date, Date> pred = (currentTime, postTime) -> postTime.getTime() - currentTime.getTime() > 500000L;
 		if (!postQueue.isEmpty()) {
 			while (pred.test(postQueue.peek().getCreatedDate(), new Date())) {
 				BiFunction<String, Stats, Stats> biFunction = (k, v) -> v.aggregate(postQueue.peek());
@@ -145,7 +158,9 @@ public class OrchestratorService {
 	public void consumeJson(StockDto stock) {
 		log.info("Consumed stock: {}", stock);
 		StockDocument stockDocument = new StockDocument();
+		stockDocument.setId(DOC_ID + (++COUNTER));
 		stockDocument.setStock(stock);
+		stockDocument.setCreatedDate(new Date());
 		Map<String, Stats> map = new HashMap<>();
 		stockDocument.setStatsMap(map);
 		for (String key : statsMap.keySet()) {
@@ -154,9 +169,12 @@ public class OrchestratorService {
 				map.put(key, stats);
 			}
 		}
-		stockDocument.setBadScores(badScores.stream().limit(POST_LIMIT).collect(Collectors.toList()));
-		stockDocument.setGoodScores(goodScores.stream().limit(POST_LIMIT).collect(Collectors.toList()));
-		stockDocument.setNeutralScores(neutralScores.stream().limit(POST_LIMIT).collect(Collectors.toList()));
+		Function<MinMaxPriorityQueue<TopScores>, List<TopScores>> function = a -> a.stream()
+				.sorted(Comparator.comparing(TopScores::getScore).reversed()).limit(POST_LIMIT)
+				.collect(Collectors.toList());
+		stockDocument.setBadScores(function.apply(badScores));
+		stockDocument.setGoodScores(function.apply(goodScores));
+		stockDocument.setNeutralScores(function.apply(neutralScores));
 		log.info("Sending document to elastic search {}", stockDocument);
 		kafkaTemplate.send(AppConstants.KAFKA_STOCK_DOCUMENT_TOPIC, AppConstants.KAFKA_STOCK_KEY, stockDocument);
 	}

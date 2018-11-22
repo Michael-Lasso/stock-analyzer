@@ -6,11 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.bugalu.domain.twitter.Sentiment;
-import com.bugalu.domain.twitter.Twit;
 import com.bugalu.hub.service.IndexService;
 
 @RestController
@@ -24,7 +21,7 @@ public class HubRestController {
 	@GetMapping("/index/{text}")
 	public ResponseEntity<String> computeSentimentValue(@PathVariable String text) {
 		logger.info("Received twit: {}", text);
-		nlp.retrievePhrases(text);
+		nlp.testIndex(text);
 		return ResponseEntity.ok(text);
 	}
 

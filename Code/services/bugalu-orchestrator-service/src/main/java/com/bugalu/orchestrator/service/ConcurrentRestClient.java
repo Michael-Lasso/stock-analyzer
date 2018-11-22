@@ -64,7 +64,7 @@ public class ConcurrentRestClient {
 			@HystrixProperty(name = "circuitBreaker.requestVolumeThreshold", value = "20"),
 			@HystrixProperty(name = "circuitBreaker.sleepWindowInMilliseconds", value = "180000"),
 			@HystrixProperty(name = "metrics.rollingStats.timeInMilliseconds", value = "180000") }, threadPoolProperties = {
-					@HystrixProperty(name = "coreSize", value = "30"),
+					@HystrixProperty(name = "coreSize", value = "20"),
 					@HystrixProperty(name = "metrics.rollingStats.timeInMilliseconds", value = "180000") }, fallbackMethod = "fallBackSentiment")
 	public Future<SocialMedia> getTwitSentiment(Twit twit) {
 		return new AsyncResult<SocialMedia>() {
