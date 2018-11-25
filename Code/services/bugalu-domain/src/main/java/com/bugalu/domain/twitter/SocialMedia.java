@@ -17,5 +17,7 @@ public interface SocialMedia {
 	String getPostText();
 
 	long getPostScore();
+	
+	String getPostStockRelated();
 
 }

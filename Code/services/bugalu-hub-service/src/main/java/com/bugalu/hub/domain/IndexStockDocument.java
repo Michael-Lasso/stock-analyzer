@@ -14,6 +14,8 @@ import com.bugalu.domain.twitter.Stats;
 @Document(indexName = "stock_document", type = "document", shards = 1, replicas = 0, refreshInterval = "-1")
 public class IndexStockDocument {
 
+	// TODO Think about changing ID to a composite string of date for better
+	// tracking the time the stock was published by the engine
 	@Id
 	private String id;
 	private StockDto stock;

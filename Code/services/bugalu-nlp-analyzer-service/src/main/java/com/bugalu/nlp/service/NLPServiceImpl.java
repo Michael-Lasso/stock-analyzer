@@ -79,14 +79,13 @@ public class NLPServiceImpl implements NLPService {
 			return Sentiment.NEUTRAL.toString();
 		}
 		DetectSentimentRequest detectSentimentRequest = new DetectSentimentRequest().withText(text)
-				.withLanguageCode("en");
+				.withLanguageCode("es");
 		DetectSentimentResult detectSentimentResult = comprehendClient.detectSentiment(detectSentimentRequest);
 		String sentiment = detectSentimentResult.getSentiment();
 		if (sentiment == null || sentiment.equals("null") || sentiment.length() < 1) {
 			log.info("wrong sentiment: " + sentiment + " - " + text);
 			return "NEUTRAL";
 		}
-		log.info("Found sentiment: {}", sentiment);
 		return sentiment;
 	}
 
@@ -110,7 +109,7 @@ public class NLPServiceImpl implements NLPService {
 	public boolean filterLanguageByText(String text, String language) {
 		Map<String, Double> detectedLanguageMap = detectLanguate(text);
 		if (detectedLanguageMap.size() > 2 || detectedLanguageMap.get(language) == null) {
-			log.info("returning bad text for: {}, {}", language, detectedLanguageMap);
+			log.info("returning bad text for: {}, {}", text, detectedLanguageMap);
 			return Boolean.FALSE;
 		}
 		return Boolean.TRUE;

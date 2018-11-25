@@ -133,4 +133,9 @@ public class Twit implements SocialMedia {
 		return this.countWeight;
 	}
 
+	@Override
+	public String getPostStockRelated() {
+		return stockRelated;
+	}
+
 }

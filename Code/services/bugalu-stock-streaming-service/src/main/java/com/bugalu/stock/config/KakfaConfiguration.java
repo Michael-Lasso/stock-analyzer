@@ -17,8 +17,8 @@ import com.bugalu.domain.stock.StockDto;
 @Configuration
 public class KakfaConfiguration {
 
-	private String host = "192.168.1.9";
-	// private String host = "127.0.0.1";
+//	private String host = "192.168.1.9";
+	 private String host = "127.0.0.1";
 	private String port = "9092";
 
 	@Bean

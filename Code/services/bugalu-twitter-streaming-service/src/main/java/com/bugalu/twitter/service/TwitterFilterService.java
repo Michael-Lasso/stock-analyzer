@@ -34,14 +34,22 @@ public class TwitterFilterService {
 	}
 
 	public void run() {
+
+		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+			log.info("shutting down twitter filter service!");
+			running = false;
+		}));
+
 		while (running) {
-			try {
-				TimeUnit.SECONDS.sleep(25);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			int currentSize = twitQue.size();
-			for (int i = 0; i < currentSize; i++) {
+			// try {
+			// TimeUnit.SECONDS.sleep(25);
+			// } catch (InterruptedException e) {
+			// e.printStackTrace();
+			// }
+			if (!twitQue.isEmpty() && twitQue.peek().getLanguageFlag().isDone()) {
+
+				// int currentSize = twitQue.size();
+				// for (int i = 0; i < currentSize; i++) {
 				try {
 					FutureTwit futureTwit = twitQue.poll();
 					boolean flag = futureTwit.getLanguageFlag().get();
@@ -49,16 +57,13 @@ public class TwitterFilterService {
 					if (flag) {
 						map.put(twit.getId(), twit);
 					} else {
-						log.info("{}-removing twit: {}", map.size(), twit.getText());
+						log.info("removing twit: {}", twit.getText());
 					}
 				} catch (InterruptedException | ExecutionException e) {
 					e.printStackTrace();
 				}
 			}
-			log.info("current twit size: {}", map.size());
-			Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-				running = false;
-			}));
+			// }
 		}
 	}
 

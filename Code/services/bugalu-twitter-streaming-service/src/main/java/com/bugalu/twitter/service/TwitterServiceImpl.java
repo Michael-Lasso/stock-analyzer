@@ -1,6 +1,7 @@
 package com.bugalu.twitter.service;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -8,6 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
@@ -17,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.bugalu.domain.stock.TopScores;
 import com.bugalu.domain.twitter.FutureTwit;
 import com.bugalu.domain.twitter.Language;
 import com.bugalu.domain.twitter.Twit;
@@ -48,11 +51,13 @@ public class TwitterServiceImpl implements TwitterService {
 	String secret;
 	@Value("${message.queue.size:1000}")
 	int msgQueSize;
-	@Value("${language.filter}")
-	String lan;
-
-	List<String> terms = Lists.newArrayList("tesla", "@elonmusk");
+//	@Value("${language.filter}")
+	String lan = "es";
+//List<String> terms = Lists.newArrayList("tesla", "@elonmusk");
+	List<String> terms = Lists.newArrayList("@IvanDuque");
 	private String stockRelated = "TSLA";
+	//TODO add this as a yaml property
+	private static final int LIST_INCREMENTS = 10;
 
 	private Thread thread;
 	private ConcurrentHashMap<String, Twit> map;
@@ -67,7 +72,7 @@ public class TwitterServiceImpl implements TwitterService {
 	}
 
 	private Twit extractIdFromTweet(String tweetJson) {
-		String text = jsonParser.parse(tweetJson).getAsJsonObject().get("text").getAsString();
+		String text = jsonParser.parse(tweetJson).getAsJsonObject().get("full_text").getAsString();
 		String id = jsonParser.parse(tweetJson).getAsJsonObject().get("id_str").getAsString();
 		JsonObject countWeightObj = jsonParser.parse(tweetJson).getAsJsonObject().getAsJsonObject("user");
 		String countWeight = countWeightObj.get("followers_count").getAsString();
@@ -77,19 +82,28 @@ public class TwitterServiceImpl implements TwitterService {
 		twit.setId(id);
 		twit.setTerms(terms);
 		twit.setStockRelated(stockRelated);
+		log.info(tweetJson);
 		// TODO change to retrieve date from tweetJson, works for now
 		twit.setDateCreated(new Date());
 		return twit;
 	}
 
 	public List<Twit> poll() {
-		return new ArrayList<>(map.values());
+		List<Twit> result = map
+				.values()
+				.stream()
+				.sorted(Comparator.comparing(Twit::getDateCreated))
+				.limit(LIST_INCREMENTS)
+				.collect(Collectors.toList());
+		return result;
 	}
 
-	public boolean clearTwitsById(List<String> ListId) {
-		for (String key : ListId) {
+	public boolean clearTwitsById(List<String> idList) {
+		log.info("Initial twit size before deletion: {}, and removing: {}", map.size(), idList.size());
+		for (String key : idList) {
 			map.remove(key);
 		}
+		log.info("New current size: {}", map.size());
 		return Boolean.TRUE;
 	}
 
@@ -134,6 +148,7 @@ public class TwitterServiceImpl implements TwitterService {
 				client.stop();
 			}
 			if (msg != null) {
+				
 				Twit twit = extractIdFromTweet(msg);
 				Language language = new Language(twit.getText(), lan);
 				twitterFutureQueue.add(new FutureTwit(twit, concurrentRestClient.getTextLanguage(language)));

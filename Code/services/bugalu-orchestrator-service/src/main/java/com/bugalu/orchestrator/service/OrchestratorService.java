@@ -46,12 +46,16 @@ public class OrchestratorService {
 	private final ConcurrentRestClient service;
 	private final ConcurrentLinkedQueue<Future<SocialMedia>> socialMediaQueue;
 	private final PriorityQueue<Post> postQueue;
-	// TODO change to map with key as the stock name
-	private final MinMaxPriorityQueue<TopScores> goodScores;
+	// TODO change to map with key as the stock name, Need to link scores with
+	// stocks
+	private final ConcurrentHashMap<String, MinMaxPriorityQueue<TopScores>> goodScores;
 	private final MinMaxPriorityQueue<TopScores> badScores;
 	private final MinMaxPriorityQueue<TopScores> neutralScores;
 	private final Map<String, Stats> statsMap;
 	private final KafkaTemplate<String, StockDocument> kafkaTemplate;
+
+	private Function<Integer, MinMaxPriorityQueue<TopScores>> createPriorityQue = limit -> MinMaxPriorityQueue
+			.orderedBy(Comparator.comparing(TopScores::getScore).reversed()).maximumSize(limit).create();
 
 	@Autowired
 	public OrchestratorService(ConcurrentRestClient service, KafkaTemplate<String, StockDocument> kafkaTemplate) {
@@ -60,12 +64,9 @@ public class OrchestratorService {
 		this.postQueue = new PriorityQueue<>(Comparator.comparing(Post::getCreatedDate));
 		this.socialMediaQueue = new ConcurrentLinkedQueue<>();
 		this.statsMap = new ConcurrentHashMap<>();
-		this.goodScores = MinMaxPriorityQueue.orderedBy(Comparator.comparing(TopScores::getScore).reversed())
-				.maximumSize(15).create();
-		this.badScores = MinMaxPriorityQueue.orderedBy(Comparator.comparing(TopScores::getScore).reversed())
-				.maximumSize(15).create();
-		this.neutralScores = MinMaxPriorityQueue.orderedBy(Comparator.comparing(TopScores::getScore).reversed())
-				.maximumSize(15).create();
+		this.goodScores = new ConcurrentHashMap<>();
+		this.badScores = createPriorityQue.apply(SCORE_MAX_SIZE);
+		this.neutralScores = createPriorityQue.apply(SCORE_MAX_SIZE);
 	}
 
 	@Scheduled(cron = "*/20 * * * * *")
@@ -79,15 +80,11 @@ public class OrchestratorService {
 			// been push to queue)
 			List<String> ids = list.stream().map(Twit::getId).collect(Collectors.toList());
 			service.clearTwits(ids);
-			int counter = 0;
 			for (Twit twit : list) {
-				counter++;
-				//TODO change payload to string and build twit after cliend received the response
+				// TODO change payload to string and build twit after cliend received the
+				// response
 				Future<SocialMedia> futureResponse = service.getTwitSentiment(twit);
 				socialMediaQueue.add(futureResponse);
-				if (counter == 5) {
-					break;
-				}
 			}
 			log.info("added future twits: {}", socialMediaQueue.size());// list.stream().map(Twit::getId).collect(Collectors.toList()));
 		} catch (InterruptedException | ExecutionException e) {
@@ -130,7 +127,7 @@ public class OrchestratorService {
 		log.info("good ones: {} - {}", goodScores.size(), goodScores);
 		log.info("bad ones: {} - {}", badScores.size(), badScores);
 		log.info("neutral ones: {} - {}", neutralScores.size(), neutralScores);
-		log.info("sample sequence: ", neutralScores.stream().map(TopScores::getScore).collect(Collectors.toList()));
+		log.info("sample sequence: {}", neutralScores.stream().map(TopScores::getScore).collect(Collectors.toList()));
 		log.info("-------------------------MAPS-------------------------");
 	}
 
@@ -143,7 +140,7 @@ public class OrchestratorService {
 				BiFunction<String, Stats, Stats> biFunction = (k, v) -> v.aggregate(postQueue.peek());
 				statsMap.computeIfPresent(postQueue.peek().getKey(), biFunction);
 				deleteFromScoreMap(badScores, postQueue.peek().getId());
-				deleteFromScoreMap(goodScores, postQueue.peek().getId());
+				// deleteFromScoreMap(goodScores, postQueue.peek().getId());
 				deleteFromScoreMap(neutralScores, postQueue.peek().getId());
 				log.info("POP: {}", postQueue.poll());
 				if (postQueue.isEmpty()) {
@@ -173,7 +170,7 @@ public class OrchestratorService {
 				.sorted(Comparator.comparing(TopScores::getScore).reversed()).limit(POST_LIMIT)
 				.collect(Collectors.toList());
 		stockDocument.setBadScores(function.apply(badScores));
-		stockDocument.setGoodScores(function.apply(goodScores));
+		stockDocument.setGoodScores(function.apply(goodScores.get(stock.getStockName())));
 		stockDocument.setNeutralScores(function.apply(neutralScores));
 		log.info("Sending document to elastic search {}", stockDocument);
 		kafkaTemplate.send(AppConstants.KAFKA_STOCK_DOCUMENT_TOPIC, AppConstants.KAFKA_STOCK_KEY, stockDocument);
@@ -187,8 +184,10 @@ public class OrchestratorService {
 		score.setText(post.getPostText());
 		score.setScore(post.getPostScore());
 		MinMaxPriorityQueue<TopScores> tempQueue;
+		String scoreMapKey = post.getPostStockRelated();
 		if (stat.getPositives() > 0) {
-			tempQueue = goodScores;
+			goodScores.putIfAbsent(scoreMapKey, createPriorityQue.apply(SCORE_MAX_SIZE));
+			tempQueue = goodScores.get(scoreMapKey);
 		} else if (stat.getNegatives() > 0) {
 			tempQueue = badScores;
 		} else {
@@ -202,12 +201,13 @@ public class OrchestratorService {
 			map.add(score);
 		} else {
 			TopScores lowest = map.peekLast();
-			log.info("comparing -- largest in queue: {}, smallest in queue: {}, current to be added: {}, computed: {}",
-					map.peekFirst(), lowest, score, lowest.compareTo(score));
 			if (score.compareTo(lowest) >= 0) {
 				TopScores removed = map.pollLast();
 				map.add(score);
 				log.info("removed: {}, for: {}", removed.getScore(), score.getScore());
+				log.info(
+						"comparing -- largest in queue: {}, smallest in queue: {}, current to be added: {}, computed: {}",
+						map.peekFirst(), lowest, score, lowest.compareTo(score));
 			}
 		}
 	}

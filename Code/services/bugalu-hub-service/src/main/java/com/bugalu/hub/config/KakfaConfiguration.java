@@ -29,8 +29,8 @@ public class KakfaConfiguration {
 	// @Value("kafka.port")
 	// private String port;
 
-	// private String host = "127.0.0.1";
-	private String host = "192.168.1.9";
+	 private String host = "127.0.0.1";
+//	private String host = "192.168.1.9";
 	private String port = "9092";
 
 	@Bean

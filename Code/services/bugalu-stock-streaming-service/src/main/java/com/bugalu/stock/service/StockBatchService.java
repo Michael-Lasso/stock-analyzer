@@ -42,8 +42,11 @@ public class StockBatchService {
 			stocks.forEach(stock -> {
 				map.putIfAbsent(stock.getStockName(), new ArrayList<>());
 				map.get(stock.getStockName()).add(stock);
+				// TODO Rather than sending individual stock, send a primary stock plus all the
+				// other stocks that could potentially affect the primary one. Have in mind that
+				// stocks could have a positive or negative effect on the primary one
 				kafkaTemplate.send(AppConstants.KAFKA_STOCK_TOPIC, AppConstants.KAFKA_STOCK_KEY, stock);
-				log.info("new stocks published: {}", stock);
+				log.info("new stock published for orchestrator: {}", stock);
 			});
 		} catch (Exception e1) {
 			e1.printStackTrace();

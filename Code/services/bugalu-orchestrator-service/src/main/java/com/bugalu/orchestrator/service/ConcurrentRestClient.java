@@ -60,18 +60,20 @@ public class ConcurrentRestClient {
 	}
 
 	@HystrixCommand(groupKey = "StoreSubmission", commandKey = "StoreSubmission", threadPoolKey = "StoreSubmission", commandProperties = {
-			@HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "180000"),
-			@HystrixProperty(name = "circuitBreaker.requestVolumeThreshold", value = "20"),
-			@HystrixProperty(name = "circuitBreaker.sleepWindowInMilliseconds", value = "180000"),
-			@HystrixProperty(name = "metrics.rollingStats.timeInMilliseconds", value = "180000") }, threadPoolProperties = {
-					@HystrixProperty(name = "coreSize", value = "20"),
-					@HystrixProperty(name = "metrics.rollingStats.timeInMilliseconds", value = "180000") }, fallbackMethod = "fallBackSentiment")
+			@HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "5000") }, threadPoolProperties = {
+					@HystrixProperty(name = "coreSize", value = "15"),
+					@HystrixProperty(name = "maxQueueSize", value = "101"),
+					@HystrixProperty(name = "keepAliveTimeMinutes", value = "2"),
+					@HystrixProperty(name = "queueSizeRejectionThreshold", value = "15"),
+					@HystrixProperty(name = "metrics.rollingStats.numBuckets", value = "12"),
+					@HystrixProperty(name = "metrics.rollingStats.timeInMilliseconds", value = "1440") }, fallbackMethod = "fallBackSentiment")
 	public Future<SocialMedia> getTwitSentiment(Twit twit) {
 		return new AsyncResult<SocialMedia>() {
 			@Override
 			public Twit invoke() {
-				ResponseEntity<Twit> response = nlpProxy.computSentimentValue(twit);
-				return response.getBody();
+				ResponseEntity<Sentiment> response = nlpProxy.computSentimentValue2(twit.getText());
+				twit.setValue(response.getBody());
+				return twit;
 			}
 		};
 	}

@@ -3,11 +3,11 @@ package com.bugalu.domain.twitter;
 import java.util.Date;
 
 public class Post {
-	private Date createdDate;
-	private Sentiment sentiment;
-	private int weightCount;
-	private String key;
-	private String id;
+	private final Date createdDate;
+	private final Sentiment sentiment;
+	private final int weightCount;
+	private final String key;
+	private final String id;
 
 	public Post(Date createdDate, Sentiment sentiment, int weightCount, String key, String id) {
 		this.createdDate = createdDate;
